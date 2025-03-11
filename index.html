@@ -18,18 +18,18 @@
         <div>
           <label class="block font-medium">Type of Surgical Department</label>
           <select class="w-full p-2 border rounded" id="surgicalType">
-            <option value="">Select</option>
-            <option value="General Surgery">General Surgery</option>
-            <option value="Cardiology">Cardiology</option>
+            <option value="cardiac">Cardiac</option>
+            <option value="orthopedic">Orthopedic</option>
+            <option value="neurology">Neurology</option>
           </select>
         </div>
 
         <div>
           <label class="block font-medium">Block Duration</label>
           <select class="w-full p-2 border rounded" id="blockDuration">
-            <option value="">Select</option>
-            <option value="1 hour">1 Hour</option>
-            <option value="2 hours">2 Hours</option>
+            <option value="1">1 Hour</option>
+            <option value="2">2 Hours</option>
+            <option value="3">3 Hours</option>
           </select>
         </div>
 
@@ -42,19 +42,18 @@
             class="w-full p-2 border rounded"
             id="surgicalServices"
           >
-            <option value="Service 1">Service 1</option>
-            <option value="Service 2">Service 2</option>
-            <option value="Service 3">Service 3</option>
-            <option value="Service 4">Service 4</option>
+            <option value="planning_accuracy">Planning Accuracy</option>
+            <option value="flow_smoothing">Flow Smoothing</option>
+            <option value="priority_planning">Priority Planning</option>
           </select>
         </div>
 
         <div>
           <label class="block font-medium">Estimated Hourly Cost/Revenue</label>
           <select class="w-full p-2 border rounded" id="costRevenue">
-            <option value="">Select</option>
-            <option value="$1000">$1000</option>
-            <option value="$2000">$2000</option>
+            <option value="2000">$2000</option>
+            <option value="3000">$3000</option>
+            <option value="4000">$4000</option>
           </select>
         </div>
 
@@ -68,27 +67,7 @@
       </form>
 
       <!-- Results Section (Hidden Initially) -->
-      <div id="results" class="mt-4 p-4 bg-gray-50 border rounded hidden">
-        <h3 class="text-lg font-semibold">
-          Your Hospital’s Performance Impact
-        </h3>
-        <ul class="list-disc ml-6 mt-2">
-          <li>
-            Total Surgical Blocks Estimate:
-            <span id="blockEstimate">1,631</span>
-          </li>
-          <li>
-            Potential Block Reduction: <span id="blockReduction">97</span>
-          </li>
-          <li>
-            Projected Case Volume Increase: <span id="caseVolume">1,034</span>
-          </li>
-          <li>
-            Financial Impact:
-            <span id="financialImpact">$1,777,816 per year</span>
-          </li>
-        </ul>
-      </div>
+      <div id="results" class="mt-4 p-4 bg-gray-50 border rounded hidden"></div>
     </div>
 
     <script src="./js/main.js"></script>
