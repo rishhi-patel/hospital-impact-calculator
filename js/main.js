@@ -9,8 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => {
       // Get user selections
       const surgicalType = document.getElementById("surgicalType").value
-      const blockDuration =
-        parseInt(document.getElementById("blockDuration").value) || 1
       const selectedServices = Array.from(
         document.getElementById("surgicalServices").selectedOptions
       ).map((opt) => opt.value)
@@ -28,20 +26,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Define impact per selected service
       const serviceImpacts = {
-        planning_accuracy: { volumeIncrease: 11, blocksReduced: 2 },
-        flow_smoothing: { volumeIncrease: 15, blocksReduced: 3 },
-        priority_planning: { volumeIncrease: 55, blocksReduced: 11 },
+        planning_accuracy: {
+          volumeIncrease: 11,
+          blocksReduced: 2,
+          costSavings: 32441,
+        },
+        flow_smoothing: {
+          volumeIncrease: 15,
+          blocksReduced: 3,
+          costSavings: 42219,
+        },
+        priority_planning: {
+          volumeIncrease: 55,
+          blocksReduced: 11,
+          costSavings: 159614,
+        },
       }
 
       let totalVolumeIncrease = 0
       let totalBlocksReduced = 0
-      let costSavings = 0
+      let totalCostSavings = 0
 
       selectedServices.forEach((service) => {
         if (serviceImpacts[service]) {
           totalVolumeIncrease += serviceImpacts[service].volumeIncrease
           totalBlocksReduced += serviceImpacts[service].blocksReduced
-          costSavings += serviceImpacts[service].blocksReduced * costPerBlock
+          totalCostSavings += serviceImpacts[service].costSavings
         }
       })
 
@@ -49,27 +59,33 @@ document.addEventListener("DOMContentLoaded", () => {
       const potentialVolume = caseVolume + totalVolumeIncrease
       const potentialBlocks = estimatedBlocks - totalBlocksReduced
 
-      // Update results UI
+      // Update results UI (Matching Table Layout)
       resultsDiv.innerHTML = `
               <h3 class='text-lg font-semibold'>Your Hospital’s Performance Impact</h3>
               <table class='w-full border-collapse border border-gray-300 mt-2'>
                   <thead>
                       <tr class='bg-gray-200'>
+                          <th class='border p-2 bg-green-200'>${
+                            surgicalType.charAt(0).toUpperCase() +
+                            surgicalType.slice(1)
+                          }</th>
                           <th class='border p-2'>Case Volume</th>
                           <th class='border p-2'>Estimated Blocks</th>
                           <th class='border p-2'>Cost Savings</th>
                       </tr>
                   </thead>
                   <tbody>
-                      <tr>
+                      <tr class='bg-gray-100 font-semibold'>
+                          <td class='border p-2'>Original</td>
                           <td class='border p-2'>${caseVolume}</td>
                           <td class='border p-2'>${estimatedBlocks}</td>
                           <td class='border p-2'>-</td>
                       </tr>
                       <tr class='bg-green-100 font-semibold'>
+                          <td class='border p-2'>Potential</td>
                           <td class='border p-2'>${potentialVolume}</td>
                           <td class='border p-2'>${potentialBlocks}</td>
-                          <td class='border p-2'>\$${costSavings.toLocaleString()}</td>
+                          <td class='border p-2'>\$${totalCostSavings.toLocaleString()}</td>
                       </tr>
                   </tbody>
               </table>
@@ -78,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
               <table class='w-full border-collapse border border-gray-300 mt-2'>
                   <thead>
                       <tr class='bg-gray-200'>
-                          <th class='border p-2'>Category</th>
+                          <th class='border p-2 bg-gray-300 font-semibold'>Potential Bucket</th>
                           <th class='border p-2'>Volume Increase</th>
                           <th class='border p-2'>Blocks Reduced</th>
                           <th class='border p-2'>Cost Savings</th>
@@ -99,10 +115,9 @@ document.addEventListener("DOMContentLoaded", () => {
                               <td class='border p-2'>${
                                 serviceImpacts[service].blocksReduced
                               }</td>
-                              <td class='border p-2'>\$${(
-                                serviceImpacts[service].blocksReduced *
-                                costPerBlock
-                              ).toLocaleString()}</td>
+                              <td class='border p-2'>\$${serviceImpacts[
+                                service
+                              ].costSavings.toLocaleString()}</td>
                           </tr>
                       `
                         )
