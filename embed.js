@@ -10,9 +10,10 @@ function initCalculator() {
   container.id = "hospital-impact-calculator"
   document.body.appendChild(container)
 
-  // Load the main script dynamically
+  // Load the main script dynamically with the correct path
   const script = document.createElement("script")
-  script.src = "./js/main.js" // Adjust path if needed
+  script.src =
+    "https://rishhi-patel.github.io/hospital-impact-calculator/js/main.js" // Fixed path
   script.defer = true
   document.body.appendChild(script)
 }
