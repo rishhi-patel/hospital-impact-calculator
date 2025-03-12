@@ -85,9 +85,3 @@ Or add this `<script>` inside a post/page:
   defer
 ></script>
 ```
-
-## 🎯 Next Steps
-
-- **[ ] API Integration** – Connect with a backend when available
-- **[ ] Dynamic Email Capture** – Replace static logic with HubSpot API
-- **[ ] Improved UI/UX** – Enhance animations and responsiveness
