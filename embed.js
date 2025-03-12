@@ -1,11 +1,9 @@
+// 📄 embed.js (This script will embed the Hospital Impact Calculator)
 document.addEventListener("DOMContentLoaded", async () => {
-  console.log("Embed.js executed!")
   await initCalculator()
 })
 
 async function initCalculator() {
-  console.log("Initializing calculator...")
-
   // Fetch and inject HTML structure from index.html
   const response = await fetch(
     "https://rishhi-patel.github.io/hospital-impact-calculator/index.html"
@@ -19,13 +17,11 @@ async function initCalculator() {
   document.body.appendChild(container)
   console.log("Calculator HTML injected")
 
-  // Load CSS dynamically
-  const style = document.createElement("link")
-  style.rel = "stylesheet"
-  style.href =
-    "https://rishhi-patel.github.io/hospital-impact-calculator/styles.css"
-  document.head.appendChild(style)
-  console.log("Styles loaded")
+  // Load Tailwind dynamically
+  const tailwind = document.createElement("script")
+  tailwind.src = "https://cdn.tailwindcss.com"
+  document.head.appendChild(tailwind)
+  console.log("Tailwind loaded")
 
   // Load main.js
   const script = document.createElement("script")
