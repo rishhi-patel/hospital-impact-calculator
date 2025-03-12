@@ -15,17 +15,19 @@ async function initCalculator() {
   container.innerHTML = html
   document.body.appendChild(container)
 
-  // Load Tailwind CSS using a proper <link> tag
+  // Load Tailwind CSS
   const tailwindLink = document.createElement("link")
   tailwindLink.rel = "stylesheet"
   tailwindLink.href =
-    "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" // Using CDN for Tailwind CSS
+    "https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
   document.head.appendChild(tailwindLink)
 
-  // Load main.js
-  const script = document.createElement("script")
-  script.src =
-    "https://rishhi-patel.github.io/hospital-impact-calculator/js/main.js"
-  script.defer = true
-  document.body.appendChild(script)
+  // Wait before loading main.js to ensure HTML is ready
+  setTimeout(() => {
+    const script = document.createElement("script")
+    script.src =
+      "https://rishhi-patel.github.io/hospital-impact-calculator/js/main.js"
+    script.defer = true
+    document.body.appendChild(script)
+  }, 500) // Small delay to ensure HTML is fully loaded
 }
