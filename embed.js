@@ -27,15 +27,5 @@ async function initCalculator() {
   script.src =
     "https://rishhi-patel.github.io/hospital-impact-calculator/js/main.js"
   script.defer = true
-  script.onload = () => {
-    // Ensure Tailwind applies styles properly after script loads
-    setTimeout(() => {
-      tailwind.config = {
-        theme: {
-          extend: {},
-        },
-      }
-    }, 500)
-  }
   document.body.appendChild(script)
 }
