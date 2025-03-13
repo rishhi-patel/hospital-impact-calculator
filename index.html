@@ -16,20 +16,50 @@
       <!-- Form -->
       <form id="impactForm" class="space-y-4">
         <div>
-          <label class="block font-medium">Type of Surgical Department</label>
-          <select class="w-full p-2 border rounded" id="surgicalType">
-            <option value="cardiac">Cardiac</option>
-            <option value="orthopedic">Orthopedic</option>
-            <option value="neurology">Neurology</option>
+          <label class="block font-medium">Hospital Type</label>
+          <select class="w-full p-2 border rounded" id="hospitalType">
+            <option value="Community">Community</option>
+            <option value="Academic">Academic</option>
           </select>
         </div>
 
         <div>
-          <label class="block font-medium">Block Duration</label>
-          <select class="w-full p-2 border rounded" id="blockDuration">
-            <option value="1">1 Hour</option>
-            <option value="2">2 Hours</option>
-            <option value="3">3 Hours</option>
+          <label class="block font-medium">Block Duration (Minutes)</label>
+          <input
+            type="number"
+            id="blockDuration"
+            class="w-full p-2 border rounded"
+            placeholder="Enter block duration (e.g., 480)"
+          />
+        </div>
+
+        <div>
+          <label class="block font-medium">Cost Rate ($ per Minute)</label>
+          <input
+            type="number"
+            id="costRate"
+            class="w-full p-2 border rounded"
+            placeholder="Enter cost rate (e.g., 40)"
+          />
+        </div>
+
+        <div>
+          <label class="block font-medium">Initial Quartile</label>
+          <select class="w-full p-2 border rounded" id="quartileInit">
+            <option value="Q3">Q3</option>
+            <option value="Q2" selected>Q2</option>
+            <option value="Q1">Q1</option>
+            <option value="Best">Best</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block font-medium">Target Quartile</label>
+          <select class="w-full p-2 border rounded" id="quartileTarget">
+            <option value="Q3">Q3</option>
+            <option value="Q2">Q2</option>
+            <option value="Q1" selected>Q1</option>
+            <option value="Best">Best</option>
           </select>
         </div>
 
@@ -42,19 +72,25 @@
             class="w-full p-2 border rounded"
             id="surgicalServices"
           >
-            <option value="planning_accuracy">Planning Accuracy</option>
-            <option value="flow_smoothing">Flow Smoothing</option>
-            <option value="priority_planning">Priority Planning</option>
+            <option value="Cardiac">Cardiac</option>
+            <option value="General">General</option>
+            <option value="Gynaecologic">Gynaecologic</option>
+            <option value="Neurosurgery">Neurosurgery</option>
+            <option value="Ophthalmic">Ophthalmic</option>
+            <option value="Orthopaedic">Orthopaedic</option>
+            <option value="Urologic">Urologic</option>
+            <option value="Vascular">Vascular</option>
           </select>
         </div>
 
         <div>
-          <label class="block font-medium">Estimated Hourly Cost/Revenue</label>
-          <select class="w-full p-2 border rounded" id="costRevenue">
-            <option value="2000">$2000</option>
-            <option value="3000">$3000</option>
-            <option value="4000">$4000</option>
-          </select>
+          <label class="block font-medium">Enter Case Volume per Service</label>
+          <input
+            type="number"
+            id="caseVolume"
+            class="w-full p-2 border rounded"
+            placeholder="Enter case volume (e.g., 1800)"
+          />
         </div>
 
         <button
