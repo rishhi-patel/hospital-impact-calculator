@@ -1,7 +1,10 @@
-// 📄 main.js (Fix ReferenceError & Handle Negative Cost Savings)
-
 document.addEventListener("DOMContentLoaded", () => {
-  const resultsDiv = document.getElementById("results") // Ensure resultsDiv is globally accessible
+  const resultsDiv = document.getElementById("results")
+  const emailSection = document.createElement("div") // Email input section
+  emailSection.id = "emailSection"
+  emailSection.classList.add("hidden")
+  resultsDiv.parentNode.appendChild(emailSection)
+
   const serviceSelect = document.getElementById("surgicalServices")
   const serviceVolumeContainer = document.createElement("div")
   serviceVolumeContainer.id = "serviceVolumeContainer"
@@ -82,10 +85,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!response.ok) throw new Error("API request failed")
 
       const responseData = await response.json()
-      displayResults(responseData.data)
+      displayInitialSummary(responseData.data)
       hideLoading(calculateBtn, "Calculate Impact")
     } catch (error) {
-      console.error("Error:", error)
+      console.error("CORS Error:", error)
       alert(
         "CORS issue: Try enabling access at https://cors-anywhere.herokuapp.com/"
       )
@@ -94,12 +97,67 @@ document.addEventListener("DOMContentLoaded", () => {
   })
 })
 
-// ✅ Fixed: Function now correctly references `resultsDiv`
-function displayResults(data) {
-  const resultsDiv = document.getElementById("results") // Ensure resultsDiv is correctly referenced
-
+// ✅ Function to display only the initial summary (matches Figma)
+function displayInitialSummary(data) {
+  const resultsDiv = document.getElementById("results")
   resultsDiv.innerHTML = `
-      <h3 class='text-lg font-semibold'>Hospital Performance Impact</h3>
+      <h3 class='text-lg font-semibold'>Your Hospital's Performance Impact</h3>
+      <div class='bg-gray-100 p-4 border rounded mt-2'>
+          <p>🔹 <strong>Total Surgical Blocks Estimate:</strong> Estimated ${
+            data.Cardiac?.blocks || 0
+          } blocks based on services.</p>
+          <p>🔹 <strong>Potential Block Reduction:</strong> Improving efficiency could reduce this total by ${
+            data.Cardiac?.potentialBlocks || 0
+          } blocks.</p>
+          <p>🔹 <strong>Projected Case Volume Increase:</strong> Additional ${
+            data.Cardiac?.potentialCaseVolume - data.Cardiac?.caseVolume || 0
+          } cases per year.</p>
+          <p>🔹 <strong>Financial Impact:</strong> Estimated cost impact: $${data.Cardiac?.potentialCostSaved.toLocaleString()} per year.</p>
+          <p>💡 These improvements come from key factors such as Planning Accuracy, Flow Smoothing, and Priority Planning.</p>
+      </div>
+  `
+
+  resultsDiv.classList.remove("hidden")
+  displayEmailSection()
+}
+
+// ✅ Function to show the email input section
+function displayEmailSection() {
+  const emailSection = document.getElementById("emailSection")
+  emailSection.innerHTML = `
+      <h3 class='text-lg font-semibold mt-4'>Enter your email to see detailed insights</h3>
+      <input type="email" id="emailInput" class="w-full p-2 border rounded mt-2" placeholder="Enter your email">
+      <button id="submitEmail" class="w-full bg-green-600 text-white p-2 rounded mt-2">Submit</button>
+      <p id="emailError" class="text-red-500 text-sm mt-1 hidden">Please enter a valid email address.</p>
+  `
+
+  emailSection.classList.remove("hidden")
+
+  document
+    .getElementById("submitEmail")
+    .addEventListener("click", validateEmail)
+}
+
+// ✅ Function to validate email before unlocking details
+function validateEmail() {
+  const emailInput = document.getElementById("emailInput").value.trim()
+  const emailError = document.getElementById("emailError")
+
+  if (!emailInput || !/^\S+@\S+\.\S+$/.test(emailInput)) {
+    emailError.classList.remove("hidden")
+    return
+  }
+
+  emailError.classList.add("hidden")
+  displayDetailedResults()
+}
+
+// ✅ Function to display full details after email validation
+function displayDetailedResults() {
+  const resultsDiv = document.getElementById("results")
+
+  resultsDiv.innerHTML += `
+      <h3 class='text-lg font-semibold mt-4'>Detailed Breakdown</h3>
       <table class='w-full border-collapse border border-gray-300 mt-2'>
           <thead>
               <tr class='bg-gray-200'>
@@ -121,53 +179,14 @@ function displayResults(data) {
                       <td class='border p-2'>${details.potentialCaseVolume}</td>
                       <td class='border p-2'>${details.blocks}</td>
                       <td class='border p-2'>${details.potentialBlocks}</td>
-                      <td class='border p-2 ${
-                        details.potentialCostSaved < 0 ? "text-red-600" : ""
-                      }'>
-                          \$${details.potentialCostSaved.toLocaleString()}
-                      </td>
+                      <td class='border p-2'>\$${details.potentialCostSaved.toLocaleString()}</td>
                   </tr>
               `
                 )
                 .join("")}
           </tbody>
       </table>
-
-      <h4 class='text-md font-semibold mt-4'>Potential Bucket Breakdown</h4>
-      <table class='w-full border-collapse border border-gray-300 mt-2'>
-          <thead>
-              <tr class='bg-gray-200'>
-                  <th class='border p-2'>Potential Bucket</th>
-                  <th class='border p-2'>Volume Increase</th>
-                  <th class='border p-2'>Blocks Reduced</th>
-                  <th class='border p-2'>Cost Savings</th>
-              </tr>
-          </thead>
-          <tbody>
-              ${Object.entries(data)
-                .map(([service, details]) =>
-                  details.potentialByBucket
-                    .map(
-                      (bucket) => `
-                      <tr>
-                          <td class='border p-2'>${bucket.bucketName}</td>
-                          <td class='border p-2'>${bucket.volumeIncreased}</td>
-                          <td class='border p-2'>${bucket.blocksReduced}</td>
-                          <td class='border p-2 ${
-                            bucket.costSaved < 0 ? "text-red-600" : ""
-                          }'>
-                              \$${bucket.costSaved.toLocaleString()}
-                          </td>
-                      </tr>
-                  `
-                    )
-                    .join("")
-                )
-                .join("")}
-          </tbody>
-      </table>
   `
-  resultsDiv.classList.remove("hidden")
 }
 
 // Loading functions
