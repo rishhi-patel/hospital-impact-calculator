@@ -81,9 +81,9 @@ document.addEventListener("DOMContentLoaded", () => {
       displayInitialSummary(responseData.data)
       hideLoading(calculateBtn, "Calculate Impact")
     } catch (error) {
-      console.error("CORS Error:", error)
+      console.error("API Error:", error)
       alert(
-        "CORS issue: Try enabling access at https://cors-anywhere.herokuapp.com/"
+        "An error occurred while processing your request. Please try again later."
       )
       hideLoading(calculateBtn, "Calculate Impact")
     }
@@ -253,6 +253,7 @@ function displayDetailedReport(apiData) {
     })
   }, 500)
 }
+
 //  Show Loading State
 function showLoading(button) {
   button.disabled = true
