@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     )
 
     const requestBody = { parameters: { services: selectedServices } }
-    const apiUrl = "http://localhost:3000/calculate-impact"
+    const apiUrl = "https://hospital-impact-api.vercel.app/calculate-impact"
 
     try {
       const response = await fetch(apiUrl, {
