@@ -34,6 +34,13 @@ document.addEventListener("DOMContentLoaded", () => {
   calculateBtn.addEventListener("click", async () => {
     showLoading(calculateBtn)
 
+    const hospitalType = document.getElementById("hospitalType").value
+    const blockDuration =
+      parseInt(document.getElementById("blockDuration").value) || 480
+    const costRate = parseInt(document.getElementById("costRate").value) || 40
+    const quartileInit = document.getElementById("quartileInit").value
+    const quartileTarget = document.getElementById("quartileTarget").value
+
     const selectedServices = Array.from(serviceSelect.selectedOptions).map(
       (option) => {
         const serviceName = option.value
@@ -49,8 +56,17 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     )
 
-    const requestBody = { parameters: { services: selectedServices } }
-    const apiUrl = "https://hospital-impact-api.vercel.app/calculate-impact"
+    const requestBody = {
+      parameters: {
+        hospitalType,
+        blockDuration,
+        costRate,
+        quartileInit,
+        quartileTarget,
+        services: selectedServices,
+      },
+    }
+    const apiUrl = "http://localhost:3000/calculate-impact"
 
     try {
       const response = await fetch(apiUrl, {
