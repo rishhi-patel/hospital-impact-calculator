@@ -66,7 +66,8 @@ document.addEventListener("DOMContentLoaded", () => {
         services: selectedServices,
       },
     }
-    const apiUrl = "https://hospital-impact-api.vercel.app/calculate-impact"
+    const apiUrl =
+      "https://2bj3fa1bu2.execute-api.ca-central-1.amazonaws.com/Development/MagnetCalculatorBackend-Dev"
 
     try {
       const response = await fetch(apiUrl, {
