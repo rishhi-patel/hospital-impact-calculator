@@ -1,7 +1,6 @@
 import { Resend } from "resend"
 
-// In a real application, you would use environment variables
-// NEVER hardcode API keys in your code
+// Securely load API key from environment variables
 const resendApiKey = process.env.RESEND_API_KEY || ""
 const resend = new Resend(resendApiKey)
 
@@ -10,11 +9,14 @@ export function generateOTP(): string {
   return Math.floor(100000 + Math.random() * 900000).toString()
 }
 
-// Send OTP email using Resend (alternative to SendGrid)
-export async function sendOTPEmail(email: string, otp: string): Promise<boolean> {
+// Send OTP email using Resend (Corrected Version)
+export async function sendOTPEmail(
+  email: string,
+  otp: string
+): Promise<boolean> {
   try {
     const { data, error } = await resend.emails.send({
-      from: "Surgical Performance Estimator <onboarding@resend.dev>",
+      from: "hello@exocodelabs.tech", // ✅ FIX: Use your verified domain email
       to: email,
       subject: "Your Verification Code",
       html: `
@@ -31,14 +33,14 @@ export async function sendOTPEmail(email: string, otp: string): Promise<boolean>
     })
 
     if (error) {
-      console.error("Error sending email:", error)
+      console.error("Resend API Error:", error)
       return false
     }
 
+    console.log("Email sent successfully:", data)
     return true
   } catch (error) {
-    console.error("Error sending email:", error)
+    console.error("Unexpected Error Sending Email:", error)
     return false
   }
 }
-
