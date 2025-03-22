@@ -7,7 +7,6 @@ const config = {
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
-    "./*.{ts,tsx}",
     "*.{js,ts,jsx,tsx,mdx}",
   ],
   prefix: "",
@@ -27,8 +26,9 @@ const config = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "#2C6150", // Dark green from the requirement
+          foreground: "#FFFFFF",
+          light: "#B5CBBF", // Light green from the requirement
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -54,12 +54,6 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Custom theme colors
-        "theme-light": "hsl(var(--theme-light))",
-        "theme-dark": "hsl(var(--theme-dark))",
-        "theme-tag-bg": "hsl(var(--theme-tag-bg))",
-        "theme-metric-bg": "hsl(var(--theme-metric-bg))",
-        "theme-metric-text": "hsl(var(--theme-metric-text))",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -80,13 +74,9 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
-      fontFamily: {
-        aeonik: ["Aeonik", "system-ui", "sans-serif"],
-      },
     },
   },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config
 
 export default config
-

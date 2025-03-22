@@ -1,0 +1,250 @@
+"use client"
+
+import type React from "react"
+
+import { useState, useEffect } from "react"
+import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
+import { motion } from "framer-motion"
+import { useToast } from "@/hooks/use-toast"
+
+type EmailVerificationProps = {
+  onVerificationSuccess: () => void
+}
+
+export function EmailVerification({
+  onVerificationSuccess,
+}: EmailVerificationProps) {
+  const [email, setEmail] = useState("")
+  const [otp, setOtp] = useState(["", "", "", "", "", ""])
+  const [isOtpVisible, setIsOtpVisible] = useState(false)
+  const { toast } = useToast()
+
+  useEffect(() => {
+    if (isOtpVisible) {
+      toast({
+        title: "Verification code sent",
+        description: "We've sent a 6-digit code to your email address.",
+      })
+    }
+  }, [isOtpVisible, toast])
+
+  const handleChange = (index: number, value: string) => {
+    if (value.length > 1) {
+      value = value.slice(0, 1)
+    }
+
+    if (value && !/^\d+$/.test(value)) {
+      return
+    }
+
+    const newOtp = [...otp]
+    newOtp[index] = value
+    setOtp(newOtp)
+
+    // Auto-focus next input
+    if (value && index < 5) {
+      const nextInput = document.getElementById(`otp-${index + 1}`)
+      if (nextInput) {
+        nextInput.focus()
+      }
+    }
+  }
+
+  const handleKeyDown = (
+    index: number,
+    e: React.KeyboardEvent<HTMLInputElement>
+  ) => {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
+      const prevInput = document.getElementById(`otp-${index - 1}`)
+      if (prevInput) {
+        prevInput.focus()
+      }
+    }
+  }
+
+  const sendOTP = async () => {
+    if (!email) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      const response = await fetch("/api/send-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to send verification code")
+      }
+
+      setIsOtpVisible(true)
+    } catch (error) {
+      console.error("Error sending OTP:", error)
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to send verification code",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const verifyOTP = async () => {
+    const otpValue = otp.join("")
+
+    if (otpValue.length !== 6) {
+      toast({
+        title: "Invalid code",
+        description: "Please enter all 6 digits of the verification code.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      const response = await fetch("/api/verify-otp", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, otp: otpValue }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to verify code")
+      }
+
+      toast({
+        title: "Verification successful",
+        description: "Your email has been verified successfully.",
+      })
+      onVerificationSuccess()
+    } catch (error) {
+      console.error("Error verifying OTP:", error)
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error ? error.message : "Failed to verify code",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleResendCode = () => {
+    sendOTP()
+    toast({
+      title: "New code sent",
+      description: "We've sent a new verification code to your email.",
+    })
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Card className="p-6 shadow-sm border rounded-lg">
+        <div className="mb-6">
+          <p className="text-center">
+            These improvements come from key factors such as{" "}
+            <span className="font-medium text-primary">
+              Planning Accuracy, Flow Smoothing,
+            </span>{" "}
+            and{" "}
+            <span className="font-medium text-primary">Priority Planning</span>.
+            To see how each factor impacts your hospital's efficiency, enter
+            your email below.
+          </p>
+        </div>
+
+        <div className="space-y-4 max-w-md mx-auto">
+          <div>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="bg-blue-50"
+            />
+          </div>
+
+          {!isOtpVisible && (
+            <div className="flex justify-center mt-6">
+              <Button
+                onClick={sendOTP}
+                className="bg-primary hover:bg-primary/90 text-white"
+              >
+                Verify Email
+              </Button>
+            </div>
+          )}
+
+          {isOtpVisible && (
+            <>
+              <div>
+                <Label>Enter verification code sent to your email</Label>
+                <div className="flex gap-2 mt-2">
+                  {otp.map((digit, index) => (
+                    <Input
+                      key={index}
+                      id={`otp-${index}`}
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={1}
+                      value={digit}
+                      onChange={(e) => handleChange(index, e.target.value)}
+                      onKeyDown={(e) => handleKeyDown(index, e)}
+                      className={`w-12 h-12 text-center text-lg ${
+                        index === 0 ? "border-primary" : ""
+                      }`}
+                      autoFocus={index === 0}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-center mt-4">
+                <Button
+                  variant="outline"
+                  onClick={handleResendCode}
+                  className="border-primary text-primary hover:bg-primary hover:text-white"
+                >
+                  Resend Code
+                </Button>
+              </div>
+
+              <div className="flex justify-center mt-6">
+                <Button
+                  onClick={verifyOTP}
+                  className="bg-primary hover:bg-primary/90 text-white"
+                >
+                  Verify OTP
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
+      </Card>
+    </motion.div>
+  )
+}
