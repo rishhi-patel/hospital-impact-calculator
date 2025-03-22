@@ -5,7 +5,13 @@ import { X, Loader2, CheckCircle, AlertCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { OTPInput } from "@/components/otp-input"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
@@ -34,7 +40,13 @@ type CalculationResults = {
 }
 
 // Define verification states
-type VerificationState = "idle" | "sending" | "sent" | "verifying" | "verified" | "error"
+type VerificationState =
+  | "idle"
+  | "sending"
+  | "sent"
+  | "verifying"
+  | "verified"
+  | "error"
 
 export default function SurgicalPerformanceEstimator() {
   // Move the ref inside the component function
@@ -80,7 +92,8 @@ export default function SurgicalPerformanceEstimator() {
   const [email, setEmail] = useState("")
 
   // State for verification
-  const [verificationState, setVerificationState] = useState<VerificationState>("idle")
+  const [verificationState, setVerificationState] =
+    useState<VerificationState>("idle")
   const [errorMessage, setErrorMessage] = useState("")
   const [otp, setOtp] = useState("")
 
@@ -105,35 +118,82 @@ export default function SurgicalPerformanceEstimator() {
       })
     }
   }
-
-  // Calculate results based on form data
-  const calculateResults = () => {
-    // This would normally be a more complex calculation based on real data
-    // For demo purposes, we'll use some simple calculations
-    const totalBlocks = 1631
-    const potentialReduction = 97
-    const currentCases = 11600
-    const projectedCases = 12634
-    const caseVolumeIncrease = 1034
-    const financialImpact = 1777816
-
-    setResults({
-      totalBlocks,
-      potentialReduction,
-      caseVolumeIncrease,
-      financialImpact,
-      currentCases,
-      projectedCases,
-    })
-
-    setShowResults(true)
-  }
-
   // Format number with commas
   const formatNumber = (num: number): string => {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
   }
+  // Calculate results based on form data
+  const calculateResults = async () => {
+    try {
+      setShowResults(false)
 
+      const requestBody = {
+        parameters: {
+          hospitalType: formData.departmentType,
+          blockDuration: parseInt(formData.blockDuration) || 480,
+          costRate: 40,
+          quartileInit: formData.currentPerformance,
+          quartileTarget: formData.targetPerformance,
+          services: formData.services.map((service) => ({
+            serviceName: service.name,
+            caseVolume: 1000,
+          })),
+        },
+      }
+
+      const response = await fetch("/api/calculate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestBody),
+      })
+
+      if (!response.ok) throw new Error("API request failed")
+
+      const data = await response.json()
+      const apiData = data.data
+
+      const totalBlocks = Object.values(apiData).reduce(
+        (sum: number, service: any) => sum + service.blocks,
+        0
+      )
+      const potentialReduction = Object.values(apiData).reduce(
+        (sum: number, service: any) =>
+          sum + (service.blocks - service.potentialBlocks),
+        0
+      )
+      const caseVolumeIncrease = Object.values(apiData).reduce(
+        (sum: number, service: any) =>
+          sum + (service.potentialCaseVolume - service.caseVolume),
+        0
+      )
+      const financialImpact = Object.values(apiData).reduce(
+        (sum: number, service: any) => sum + service.potentialCostSaved,
+        0
+      )
+      const currentCases = Object.values(apiData).reduce(
+        (sum: number, service: any) => sum + service.caseVolume,
+        0
+      )
+      const projectedCases = Object.values(apiData).reduce(
+        (sum: number, service: any) => sum + service.potentialCaseVolume,
+        0
+      )
+
+      setResults({
+        totalBlocks,
+        potentialReduction,
+        caseVolumeIncrease,
+        financialImpact,
+        currentCases,
+        projectedCases,
+      })
+
+      setShowResults(true)
+    } catch (error) {
+      console.error("Error calling API:", error)
+      alert("There was a problem fetching the data. Please try again.")
+    }
+  }
   // Send OTP to email
   const sendOTP = async () => {
     if (!email) {
@@ -163,7 +223,11 @@ export default function SurgicalPerformanceEstimator() {
       setVerificationState("sent")
     } catch (error) {
       console.error("Error sending OTP:", error)
-      setErrorMessage(error instanceof Error ? error.message : "Failed to send verification code")
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : "Failed to send verification code"
+      )
       setVerificationState("error")
     }
   }
@@ -191,7 +255,9 @@ export default function SurgicalPerformanceEstimator() {
       setVerificationState("verified")
     } catch (error) {
       console.error("Error verifying OTP:", error)
-      setErrorMessage(error instanceof Error ? error.message : "Failed to verify code")
+      setErrorMessage(
+        error instanceof Error ? error.message : "Failed to verify code"
+      )
       setVerificationState("error")
     }
   }
@@ -205,10 +271,12 @@ export default function SurgicalPerformanceEstimator() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8 font-aeonik">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold text-foreground">Surgical Performance Estimator</h1>
+        <h1 className="text-3xl font-bold text-foreground">
+          Surgical Performance Estimator
+        </h1>
         <p className="mt-2 text-foreground">
-          Provide details about your surgical department to calculate its performance and compare it to industry
-          benchmarks.
+          Provide details about your surgical department to calculate its
+          performance and compare it to industry benchmarks.
         </p>
       </div>
 
@@ -220,17 +288,16 @@ export default function SurgicalPerformanceEstimator() {
             </Label>
             <Select
               value={formData.departmentType}
-              onValueChange={(value) => setFormData({ ...formData, departmentType: value })}
+              onValueChange={(value) =>
+                setFormData({ ...formData, departmentType: value })
+              }
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Input" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="general">General Surgery</SelectItem>
-                <SelectItem value="cardiac">Cardiac Surgery</SelectItem>
-                <SelectItem value="orthopedic">Orthopedic Surgery</SelectItem>
-                <SelectItem value="neuro">Neurosurgery</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                <SelectItem value="Academic">Academic</SelectItem>
+                <SelectItem value="Community">Community</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -241,7 +308,9 @@ export default function SurgicalPerformanceEstimator() {
             </Label>
             <Select
               value={formData.blockDuration}
-              onValueChange={(value) => setFormData({ ...formData, blockDuration: value })}
+              onValueChange={(value) =>
+                setFormData({ ...formData, blockDuration: value })
+              }
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Input" />
@@ -259,11 +328,16 @@ export default function SurgicalPerformanceEstimator() {
           <div>
             <Label className="mb-2 block font-medium">
               Which surgical services does your department offer?{" "}
-              <span className="text-sm text-muted-foreground">(Select all that apply)</span>
+              <span className="text-sm text-muted-foreground">
+                (Select all that apply)
+              </span>
             </Label>
             <div className="mb-2 flex flex-wrap gap-2">
               {formData.services.map((service) => (
-                <div key={service.id} className="flex items-center rounded-md bg-theme-tag-bg px-3 py-1 text-sm">
+                <div
+                  key={service.id}
+                  className="flex items-center rounded-md bg-theme-tag-bg px-3 py-1 text-sm"
+                >
                   <span>{service.name}</span>
                   <button
                     type="button"
@@ -277,7 +351,10 @@ export default function SurgicalPerformanceEstimator() {
             </div>
             <div className="flex flex-wrap gap-2">
               {availableServices
-                .filter((service) => !formData.services.some((s) => s.id === service.id))
+                .filter(
+                  (service) =>
+                    !formData.services.some((s) => s.id === service.id)
+                )
                 .map((service) => (
                   <button
                     key={service.id}
@@ -292,41 +369,52 @@ export default function SurgicalPerformanceEstimator() {
           </div>
 
           <div>
-            <Label htmlFor="currentPerformance" className="mb-2 block font-medium">
+            <Label
+              htmlFor="currentPerformance"
+              className="mb-2 block font-medium"
+            >
               How would you rate your department&apos;s current performance?
             </Label>
             <Select
               value={formData.currentPerformance}
-              onValueChange={(value) => setFormData({ ...formData, currentPerformance: value })}
+              onValueChange={(value) =>
+                setFormData({ ...formData, currentPerformance: value })
+              }
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Input" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="poor">Poor</SelectItem>
-                <SelectItem value="average">Average</SelectItem>
-                <SelectItem value="good">Good</SelectItem>
-                <SelectItem value="excellent">Excellent</SelectItem>
+                <SelectItem value="Q3">Poor</SelectItem>
+                <SelectItem value="Q2">Average</SelectItem>
+                <SelectItem value="Q1">Good</SelectItem>
+                <SelectItem value="best">Excellent</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <Label htmlFor="targetPerformance" className="mb-2 block font-medium">
-              What level of performance would you like to compare your department to?
+            <Label
+              htmlFor="targetPerformance"
+              className="mb-2 block font-medium"
+            >
+              What level of performance would you like to compare your
+              department to?
             </Label>
             <Select
               value={formData.targetPerformance}
-              onValueChange={(value) => setFormData({ ...formData, targetPerformance: value })}
+              onValueChange={(value) =>
+                setFormData({ ...formData, targetPerformance: value })
+              }
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Input" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="industry">Industry Average</SelectItem>
-                <SelectItem value="top25">Top 25%</SelectItem>
-                <SelectItem value="top10">Top 10%</SelectItem>
-                <SelectItem value="best">Best in Class</SelectItem>
+                <SelectItem value="Q3">Poor</SelectItem>
+                <SelectItem value="Q2">Average</SelectItem>
+                <SelectItem value="Q1">Good</SelectItem>
+                <SelectItem value="best">Excellent</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -348,13 +436,18 @@ export default function SurgicalPerformanceEstimator() {
         <div
           ref={resultsRef}
           className={`mt-8 rounded-lg border bg-white p-6 shadow-sm transition-all duration-500 ${
-            showResults ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10 pointer-events-none"
+            showResults
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-10 pointer-events-none"
           }`}
         >
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-foreground">Your Surgery Department&apos;s Performance Impact</h2>
+            <h2 className="text-2xl font-bold text-foreground">
+              Your Surgery Department&apos;s Performance Impact
+            </h2>
             <p className="text-foreground mt-2">
-              Based on your input, here&apos;s your hospital&apos;s estimated performance impact:
+              Based on your input, here&apos;s your hospital&apos;s estimated
+              performance impact:
             </p>
           </div>
 
@@ -362,14 +455,19 @@ export default function SurgicalPerformanceEstimator() {
             <div className="flex items-center gap-4">
               <div className="flex h-24 w-48 items-center rounded-lg bg-theme-metric-bg pl-4">
                 <div>
-                  <div className="text-3xl font-bold text-theme-metric-text">{formatNumber(results.totalBlocks)}</div>
+                  <div className="text-3xl font-bold text-theme-metric-text">
+                    {formatNumber(results.totalBlocks)}
+                  </div>
                   <div className="text-sm text-gray-500">blocks</div>
                 </div>
               </div>
               <div>
-                <h3 className="font-semibold">Total Surgical Blocks Estimate</h3>
+                <h3 className="font-semibold">
+                  Total Surgical Blocks Estimate
+                </h3>
                 <p className="text-gray-600">
-                  You have an estimated {formatNumber(results.totalBlocks)} blocks based on your services
+                  You have an estimated {formatNumber(results.totalBlocks)}{" "}
+                  blocks based on your services
                 </p>
               </div>
             </div>
@@ -386,8 +484,8 @@ export default function SurgicalPerformanceEstimator() {
               <div>
                 <h3 className="font-semibold">Potential Block Reduction</h3>
                 <p className="text-gray-600">
-                  By improving efficiency, you could reduce this total by {formatNumber(results.potentialReduction)}{" "}
-                  blocks.
+                  By improving efficiency, you could reduce this total by{" "}
+                  {formatNumber(results.potentialReduction)} blocks.
                 </p>
               </div>
             </div>
@@ -402,10 +500,14 @@ export default function SurgicalPerformanceEstimator() {
                 </div>
               </div>
               <div>
-                <h3 className="font-semibold">Projected Case Volume Increase</h3>
+                <h3 className="font-semibold">
+                  Projected Case Volume Increase
+                </h3>
                 <p className="text-gray-600">
-                  You could perform an additional {formatNumber(results.caseVolumeIncrease)} cases per year, moving from{" "}
-                  {formatNumber(results.currentCases)} to {formatNumber(results.projectedCases)} cases.
+                  You could perform an additional{" "}
+                  {formatNumber(results.caseVolumeIncrease)} cases per year,
+                  moving from {formatNumber(results.currentCases)} to{" "}
+                  {formatNumber(results.projectedCases)} cases.
                 </p>
               </div>
             </div>
@@ -419,10 +521,12 @@ export default function SurgicalPerformanceEstimator() {
                 </div>
               </div>
               <div>
-                <h3 className="font-semibold">Financial Impact (Cost Savings or Revenue Increase)</h3>
+                <h3 className="font-semibold">
+                  Financial Impact (Cost Savings or Revenue Increase)
+                </h3>
                 <p className="text-gray-600">
-                  With improved performance, your potential $ impact is ${formatNumber(results.financialImpact)} per
-                  year.
+                  With improved performance, your potential $ impact is $
+                  {formatNumber(results.financialImpact)} per year.
                 </p>
               </div>
             </div>
@@ -430,10 +534,19 @@ export default function SurgicalPerformanceEstimator() {
             <div className="mt-6 text-center">
               <p className="mb-4">
                 These improvements come from key factors such as{" "}
-                <span className="font-semibold text-theme-dark">Planning Accuracy</span>,{" "}
-                <span className="font-semibold text-theme-dark">Flow Smoothing</span>, and{" "}
-                <span className="font-semibold text-theme-dark">Priority Planning</span>. To see how each factor impacts
-                your hospital&apos;s efficiency, enter your email below.
+                <span className="font-semibold text-theme-dark">
+                  Planning Accuracy
+                </span>
+                ,{" "}
+                <span className="font-semibold text-theme-dark">
+                  Flow Smoothing
+                </span>
+                , and{" "}
+                <span className="font-semibold text-theme-dark">
+                  Priority Planning
+                </span>
+                . To see how each factor impacts your hospital&apos;s
+                efficiency, enter your email below.
               </p>
 
               <div className="mx-auto mt-4 max-w-md">
@@ -445,8 +558,9 @@ export default function SurgicalPerformanceEstimator() {
                       </div>
                       <div className="ml-3">
                         <p className="text-sm font-medium">
-                          Email verified successfully! We'll send you detailed information about how each factor impacts
-                          your hospital's efficiency.
+                          Email verified successfully! We'll send you detailed
+                          information about how each factor impacts your
+                          hospital's efficiency.
                         </p>
                       </div>
                     </div>
@@ -470,7 +584,8 @@ export default function SurgicalPerformanceEstimator() {
                             verificationState === "verifying"
                           }
                         />
-                        {verificationState === "idle" || verificationState === "error" ? (
+                        {verificationState === "idle" ||
+                        verificationState === "error" ? (
                           <Button
                             onClick={sendOTP}
                             className="whitespace-nowrap border-theme-dark bg-white text-theme-dark hover:bg-gray-50"
@@ -502,9 +617,12 @@ export default function SurgicalPerformanceEstimator() {
                       </Alert>
                     )}
 
-                    {(verificationState === "sent" || verificationState === "verifying") && (
+                    {(verificationState === "sent" ||
+                      verificationState === "verifying") && (
                       <div className="space-y-2">
-                        <Label className="block text-left">Enter verification code sent to your email</Label>
+                        <Label className="block text-left">
+                          Enter verification code sent to your email
+                        </Label>
                         <OTPInput onComplete={handleOTPComplete} />
                         {verificationState === "verifying" && (
                           <div className="flex items-center justify-center mt-2">
@@ -524,4 +642,3 @@ export default function SurgicalPerformanceEstimator() {
     </div>
   )
 }
-

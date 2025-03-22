@@ -18,7 +18,10 @@ export function OTPInput({ length = 6, onComplete }: OTPInputProps) {
     inputRefs.current = inputRefs.current.slice(0, length)
   }, [length])
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
     const value = e.target.value
 
     // Only allow one digit
@@ -41,9 +44,17 @@ export function OTPInput({ length = 6, onComplete }: OTPInputProps) {
     }
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
+  const handleKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    index: number
+  ) => {
     // Move to previous input on backspace if current input is empty
-    if (e.key === "Backspace" && !otp[index] && index > 0 && inputRefs.current[index - 1]) {
+    if (
+      e.key === "Backspace" &&
+      !otp[index] &&
+      index > 0 &&
+      inputRefs.current[index - 1]
+    ) {
       inputRefs.current[index - 1]?.focus()
     }
   }
@@ -83,7 +94,9 @@ export function OTPInput({ length = 6, onComplete }: OTPInputProps) {
       {otp.map((digit, index) => (
         <Input
           key={index}
-          ref={(el) => (inputRefs.current[index] = el)}
+          ref={(el) => {
+            inputRefs.current[index] = el
+          }}
           type="text"
           inputMode="numeric"
           maxLength={1}
@@ -98,4 +111,3 @@ export function OTPInput({ length = 6, onComplete }: OTPInputProps) {
     </div>
   )
 }
-

@@ -1,4 +1,4 @@
-import SurgicalPerformanceEstimator from "@/surgical-performance-estimator"
+import SurgicalPerformanceEstimator from "@/components/surgical-performance-estimator"
 
 export default function Home() {
   return (
@@ -7,4 +7,3 @@ export default function Home() {
     </main>
   )
 }
-
