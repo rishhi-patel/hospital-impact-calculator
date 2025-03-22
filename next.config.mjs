@@ -1,4 +1,4 @@
-const { withNetlify } = require("@netlify/next")
+import { withNetlify } from "@netlify/next"
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
