@@ -1,3 +1,5 @@
+const { withNetlify } = require("@netlify/next")
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
@@ -14,14 +16,7 @@ const nextConfig = {
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
   },
-  output: "export",
   reactStrictMode: true,
-  assetPrefix:
-    process.env.NODE_ENV === "production"
-      ? "https://rishhi-patel.github.io/hospital-impact-calculator/"
-      : "",
-  basePath:
-    process.env.NODE_ENV === "production" ? "/hospital-impact-calculator" : "",
 }
 
-export default nextConfig
+export default withNetlify(nextConfig)

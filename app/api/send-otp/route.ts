@@ -2,10 +2,10 @@ import { NextResponse } from "next/server"
 import { authenticator } from "otplib"
 import { sendOTPEmail } from "@/lib/sendgrid"
 
-// Secure secret key for OTP generation (store in `.env` securely)
 const OTP_SECRET = process.env.OTP_SECRET || "your-secure-secret-key"
 
-// Send OTP API
+authenticator.options = { window: 1 } // Allow small clock drift (±30s)
+
 export async function POST(request: Request) {
   try {
     const { email } = await request.json()
@@ -17,23 +17,22 @@ export async function POST(request: Request) {
       )
     }
 
-    // Generate OTP using otplib (valid for 5 minutes)
-    const otp = authenticator.generate(OTP_SECRET)
+    const userSecret = `${OTP_SECRET}-${email}`
+    const otp = authenticator.generate(userSecret)
 
-    // Send OTP email
-    // const emailSent = await sendOTPEmail(email, otp)
+    // Send OTP email here
+    const emailSent = await sendOTPEmail(email, otp)
 
-    // if (!emailSent) {
-    //   return NextResponse.json(
-    //     { success: false, message: "Failed to send verification code" },
-    //     { status: 500 }
-    //   )
-    // }
+    if (!emailSent) {
+      return NextResponse.json(
+        { success: false, message: "Failed to send verification code" },
+        { status: 500 }
+      )
+    }
 
     return NextResponse.json({
       success: true,
-      message: "Verification code sent",
-      otp,
+      message: "Verification code sent successfully",
     })
   } catch (error) {
     console.error("Error sending OTP:", error)

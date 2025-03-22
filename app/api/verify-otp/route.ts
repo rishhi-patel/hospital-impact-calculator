@@ -1,23 +1,28 @@
 import { NextResponse } from "next/server"
 import { authenticator } from "otplib"
 
-// Secure secret key (must match the one used in Send OTP route)
 const OTP_SECRET = process.env.OTP_SECRET || "your-secure-secret-key"
 
-// Verify OTP API
+authenticator.options = { window: 1 } // Allow small time drift
+
 export async function POST(request: Request) {
   try {
     const { email, otp } = await request.json()
 
-    if (!email || !otp) {
+    if (
+      !email ||
+      typeof email !== "string" ||
+      !otp ||
+      typeof otp !== "string"
+    ) {
       return NextResponse.json(
         { success: false, message: "Email and OTP are required" },
         { status: 400 }
       )
     }
 
-    // Verify OTP using otplib
-    const isValid = authenticator.check(otp, OTP_SECRET)
+    const userSecret = `${OTP_SECRET}-${email}`
+    const isValid = authenticator.check(otp, userSecret)
 
     if (!isValid) {
       return NextResponse.json(
