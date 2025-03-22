@@ -138,7 +138,6 @@ export function SurgicalForm({
               <div className="text-red-500">{formik.errors.departmentType}</div>
             ) : null}
           </div>
-
           <div>
             <Label htmlFor="blockDuration">
               What is the standard block duration in your surgical department?
@@ -277,14 +276,14 @@ export function SurgicalForm({
           <div className="flex justify-center pt-4">
             <Button
               type="submit"
-              className="text-teal-600 border-teal-600 hover:bg-teal-700 hover:border-teal-700 hover:text-white px-8"
+              className="text-magnet border-magnet hover:bg-magnet hover:border-magnet hover:text-white px-8"
               disabled={loading}
               variant="outline"
             >
               {loading ? (
                 <div className="flex items-center">
                   <svg
-                    className="animate-spin h-5 w-5 mr-3 text-teal-600"
+                    className="animate-spin h-5 w-5 mr-3 text-magnet"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -303,10 +302,10 @@ export function SurgicalForm({
                       d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                     ></path>
                   </svg>
-                  Loading...
+                  <strong>Loading...</strong>
                 </div>
               ) : (
-                "CALCULATE IMPACT"
+                <strong>CALCULATE IMPACT</strong>
               )}
             </Button>
           </div>

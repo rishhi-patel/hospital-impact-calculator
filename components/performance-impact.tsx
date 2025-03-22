@@ -55,7 +55,7 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div className="flex items-center bg-gray-50 p-4 rounded-lg">
-            <div className="bg-teal-100 text-teal-800 p-4 rounded-lg mr-4">
+            <div className="bg-magnet-faint text-magnet p-4 rounded-lg mr-4">
               <div className="font-bold text-2xl">
                 {formatNumber(data.totalBlocks)}
               </div>
@@ -71,7 +71,7 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
           </div>
 
           <div className="flex items-center bg-gray-50 p-4 rounded-lg">
-            <div className="bg-teal-100 text-teal-800 p-4 rounded-lg mr-4">
+            <div className="bg-magnet-faint text-magnet p-4 rounded-lg mr-4">
               <div className="font-bold text-2xl">
                 {data.potentialReduction}
               </div>
@@ -87,7 +87,7 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
           </div>
 
           <div className="flex items-center bg-gray-50 p-4 rounded-lg">
-            <div className="bg-teal-100 text-teal-800 p-4 rounded-lg mr-4">
+            <div className="bg-magnet-faint text-magnet p-4 rounded-lg mr-4">
               <div className="font-bold text-2xl">
                 {formatNumber(data.projectedCases)}
               </div>
@@ -103,7 +103,7 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
           </div>
 
           <div className="flex items-center bg-gray-50 p-4 rounded-lg">
-            <div className="bg-teal-100 text-teal-800 p-4 rounded-lg mr-4">
+            <div className="bg-magnet-faint text-magnet p-4 rounded-lg mr-4">
               <div className="font-bold text-2xl">
                 {formatCurrency(data.financialImpact)}
               </div>

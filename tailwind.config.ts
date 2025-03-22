@@ -20,6 +20,10 @@ const config = {
     },
     extend: {
       colors: {
+        magnet: {
+          DEFAULT: "#2C6150",
+          faint: "rgba(44, 97, 80, 0.09)",
+        },
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
