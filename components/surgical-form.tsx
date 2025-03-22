@@ -1,8 +1,9 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
+import { useFormik } from "formik"
+import * as Yup from "yup"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import {
@@ -35,11 +36,8 @@ export function SurgicalForm({
 }: {
   onCalculate: (data: RequestBody) => void
 }) {
-  const [departmentType, setDepartmentType] = useState("")
-  const [blockDuration, setBlockDuration] = useState("")
-  const [currentPerformance, setCurrentPerformance] = useState("")
-  const [comparisonLevel, setComparisonLevel] = useState("")
   const [selectedServices, setSelectedServices] = useState<string[]>([])
+  const [loading, setLoading] = useState(false)
 
   const serviceCategories = [
     { id: "cardiac", name: "Cardiac" },
@@ -57,6 +55,7 @@ export function SurgicalForm({
     { id: "urologic", name: "Urologic" },
     { id: "vascular", name: "Vascular" },
   ]
+
   const toggleService = (serviceId: string) => {
     if (selectedServices.includes(serviceId)) {
       setSelectedServices(selectedServices.filter((id) => id !== serviceId))
@@ -65,37 +64,69 @@ export function SurgicalForm({
     }
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const services: Service[] = selectedServices
-      .map((serviceId) => {
-        const service = serviceCategories.find((cat) => cat.id === serviceId)
-        return service ? { serviceName: service.name, caseVolume: 1000 } : null
-      })
-      .filter((service): service is Service => service !== null)
+  const formik = useFormik({
+    initialValues: {
+      departmentType: "Community",
+      blockDuration: "440",
+      currentPerformance: "Q2",
+      comparisonLevel: "Q1",
+      servicesError: "",
+    },
+    validationSchema: Yup.object({
+      departmentType: Yup.string().required("Required"),
+      blockDuration: Yup.string().required("Required"),
+      currentPerformance: Yup.string().required("Required"),
+      comparisonLevel: Yup.string().required("Required"),
+    }),
+    onSubmit: async (values) => {
+      setLoading(true)
+      const services: Service[] = selectedServices
+        .map((serviceId) => {
+          const service = serviceCategories.find((cat) => cat.id === serviceId)
+          return service
+            ? { serviceName: service.name, caseVolume: 1000 }
+            : null
+        })
+        .filter((service): service is Service => service !== null)
 
-    onCalculate({
-      parameters: {
-        hospitalType: departmentType,
-        blockDuration: parseInt(blockDuration, 10),
-        costRate: 40,
-        quartileInit: currentPerformance,
-        quartileTarget: comparisonLevel,
-        services,
-      },
-    })
-  }
+      if (services.length === 0) {
+        formik.setFieldError(
+          "servicesError",
+          "Please select at least one service."
+        )
+        setLoading(false)
+        return
+      }
+
+      await onCalculate({
+        parameters: {
+          hospitalType: values.departmentType,
+          blockDuration: parseInt(values.blockDuration, 10),
+          costRate: 20,
+          quartileInit: values.currentPerformance,
+          quartileTarget: values.comparisonLevel,
+          services,
+        },
+      })
+      setLoading(false)
+    },
+  })
 
   return (
     <Card className="p-6 shadow-sm border rounded-lg">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={formik.handleSubmit}>
         <div className="space-y-6">
           <div>
-            <Label htmlFor="department-type">
+            <Label htmlFor="departmentType">
               What type of surgical department do you work in?
             </Label>
-            <Select value={departmentType} onValueChange={setDepartmentType}>
-              <SelectTrigger id="department-type" className="mt-2">
+            <Select
+              value={formik.values.departmentType}
+              onValueChange={(value) =>
+                formik.setFieldValue("departmentType", value)
+              }
+            >
+              <SelectTrigger id="departmentType" className="mt-2">
                 <SelectValue placeholder="Input" />
               </SelectTrigger>
               <SelectContent>
@@ -103,23 +134,34 @@ export function SurgicalForm({
                 <SelectItem value="Academic">Academic</SelectItem>
               </SelectContent>
             </Select>
+            {formik.touched.departmentType && formik.errors.departmentType ? (
+              <div className="text-red-500">{formik.errors.departmentType}</div>
+            ) : null}
           </div>
 
           <div>
-            <Label htmlFor="block-duration">
+            <Label htmlFor="blockDuration">
               What is the standard block duration in your surgical department?
             </Label>
-            <Select value={blockDuration} onValueChange={setBlockDuration}>
-              <SelectTrigger id="block-duration" className="mt-2">
+            <Select
+              value={formik.values.blockDuration}
+              onValueChange={(value) =>
+                formik.setFieldValue("blockDuration", value)
+              }
+            >
+              <SelectTrigger id="blockDuration" className="mt-2">
                 <SelectValue placeholder="Input" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="240">240 minutes (4 hours)</SelectItem>
                 <SelectItem value="480">480 minutes (8 hours)</SelectItem>
                 <SelectItem value="720">720 minutes (12 hours)</SelectItem>
-                <SelectItem value="other">Other</SelectItem>
+                <SelectItem value="440">440 minutes (Default)</SelectItem>
               </SelectContent>
             </Select>
+            {formik.touched.blockDuration && formik.errors.blockDuration ? (
+              <div className="text-red-500">{formik.errors.blockDuration}</div>
+            ) : null}
           </div>
 
           <div>
@@ -169,17 +211,22 @@ export function SurgicalForm({
                   ))}
               </div>
             </div>
+            {formik.errors.servicesError ? (
+              <div className="text-red-500">{formik.errors.servicesError}</div>
+            ) : null}
           </div>
 
           <div>
-            <Label htmlFor="current-performance">
+            <Label htmlFor="currentPerformance">
               How would you rate your department's current performance?
             </Label>
             <Select
-              value={currentPerformance}
-              onValueChange={setCurrentPerformance}
+              value={formik.values.currentPerformance}
+              onValueChange={(value) =>
+                formik.setFieldValue("currentPerformance", value)
+              }
             >
-              <SelectTrigger id="current-performance" className="mt-2">
+              <SelectTrigger id="currentPerformance" className="mt-2">
                 <SelectValue placeholder="Input" />
               </SelectTrigger>
               <SelectContent>
@@ -189,15 +236,26 @@ export function SurgicalForm({
                 <SelectItem value="Q0">Excellent</SelectItem>
               </SelectContent>
             </Select>
+            {formik.touched.currentPerformance &&
+            formik.errors.currentPerformance ? (
+              <div className="text-red-500">
+                {formik.errors.currentPerformance}
+              </div>
+            ) : null}
           </div>
 
           <div>
-            <Label htmlFor="comparison-level">
+            <Label htmlFor="comparisonLevel">
               What level of performance would you like to compare your
               department to?
             </Label>
-            <Select value={comparisonLevel} onValueChange={setComparisonLevel}>
-              <SelectTrigger id="comparison-level" className="mt-2">
+            <Select
+              value={formik.values.comparisonLevel}
+              onValueChange={(value) =>
+                formik.setFieldValue("comparisonLevel", value)
+              }
+            >
+              <SelectTrigger id="comparisonLevel" className="mt-2">
                 <SelectValue placeholder="Input" />
               </SelectTrigger>
               <SelectContent>
@@ -207,14 +265,47 @@ export function SurgicalForm({
                 <SelectItem value="Q0">Excellent</SelectItem>
               </SelectContent>
             </Select>
+            {formik.touched.comparisonLevel && formik.errors.comparisonLevel ? (
+              <div className="text-red-500">
+                {formik.errors.comparisonLevel}
+              </div>
+            ) : null}
           </div>
 
           <div className="flex justify-center pt-4">
             <Button
               type="submit"
-              className="bg-teal-600 hover:bg-teal-700 text-white px-8"
+              className="text-teal-600 border-teal-600 hover:bg-teal-700 hover:border-teal-700 hover:text-white px-8"
+              disabled={loading}
+              variant="outline"
             >
-              CALCULATE IMPACT
+              {loading ? (
+                <div className="flex items-center">
+                  <svg
+                    className="animate-spin h-5 w-5 mr-3 text-teal-600"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Loading...
+                </div>
+              ) : (
+                "CALCULATE IMPACT"
+              )}
             </Button>
           </div>
         </div>
