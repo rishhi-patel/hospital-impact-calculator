@@ -45,15 +45,15 @@ export function SurgicalForm({
     { id: "gynaecologic", name: "Gynaecologic" },
     { id: "neurosurgery", name: "Neurosurgery" },
     { id: "ophthalmic", name: "Ophthalmic" },
+    { id: "orthopaedic", name: "Orthopaedic" },
     {
       id: "oral_and_maxillofacial_and_dentistry",
       name: "Oral and Maxillofacial and Dentistry",
     },
-    { id: "orthopaedic", name: "Orthopaedic" },
     { id: "otolaryngic_ent", name: "Otolaryngic ENT" },
-    { id: "plastic_and_reconstructive", name: "Plastic and Reconstructive" },
     { id: "urologic", name: "Urologic" },
     { id: "vascular", name: "Vascular" },
+    { id: "plastic_and_reconstructive", name: "Plastic and Reconstructive" },
   ]
 
   const toggleService = (serviceId: string) => {
@@ -180,7 +180,8 @@ export function SurgicalForm({
                       service && (
                         <div
                           key={service.id}
-                          className="flex items-center gap-1 px-4 py-2 rounded-md bg-primary-light text-primary"
+                          className="flex items-center gap-1 px-4 py-2  bg-primary-light text-primary border border-gray-300 rounded-lg"
+                          style={{ borderRadius: "8px !important" }}
                         >
                           {service.name}
                           <button
@@ -203,7 +204,8 @@ export function SurgicalForm({
                     <button
                       key={category.id}
                       type="button"
-                      className="px-4 py-2 border rounded-md hover:bg-gray-50"
+                      className="px-4 py-2 border rounded-md hover:bg-gray-50 border border-gray-300"
+                      style={{ borderRadius: "8px !important" }}
                       onClick={() => toggleService(category.id)}
                     >
                       {category.name}
