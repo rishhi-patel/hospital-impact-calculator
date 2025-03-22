@@ -14,16 +14,26 @@ import {
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 
-type SurgicalService = {
-  id: string
-  name: string
-  category: string
+interface Service {
+  serviceName: string
+  caseVolume: number
+}
+
+interface RequestBody {
+  parameters: {
+    hospitalType: string
+    blockDuration: number
+    costRate: number
+    quartileInit: string
+    quartileTarget: string
+    services: Service[]
+  }
 }
 
 export function SurgicalForm({
   onCalculate,
 }: {
-  onCalculate: (data: any) => void
+  onCalculate: (data: RequestBody) => void
 }) {
   const [departmentType, setDepartmentType] = useState("")
   const [blockDuration, setBlockDuration] = useState("")
@@ -57,12 +67,22 @@ export function SurgicalForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    const services: Service[] = selectedServices
+      .map((serviceId) => {
+        const service = serviceCategories.find((cat) => cat.id === serviceId)
+        return service ? { serviceName: service.name, caseVolume: 1000 } : null
+      })
+      .filter((service): service is Service => service !== null)
+
     onCalculate({
-      departmentType,
-      blockDuration,
-      selectedServices,
-      currentPerformance,
-      comparisonLevel,
+      parameters: {
+        hospitalType: departmentType,
+        blockDuration: parseInt(blockDuration, 10),
+        costRate: 40,
+        quartileInit: currentPerformance,
+        quartileTarget: comparisonLevel,
+        services,
+      },
     })
   }
 
@@ -79,8 +99,8 @@ export function SurgicalForm({
                 <SelectValue placeholder="Input" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="General">General</SelectItem>
-                <SelectItem value="Acadmic">Acadmic</SelectItem>
+                <SelectItem value="Community">Community</SelectItem>
+                <SelectItem value="Academic">Academic</SelectItem>
               </SelectContent>
             </Select>
           </div>

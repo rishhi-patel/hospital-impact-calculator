@@ -18,21 +18,10 @@ type PerformanceData = {
 
 type PerformanceImpactProps = {
   data: PerformanceData
-  onEmailSubmit: (email: string) => void
 }
 
-export function PerformanceImpact({
-  data,
-  onEmailSubmit,
-}: PerformanceImpactProps) {
+export function PerformanceImpact({ data }: PerformanceImpactProps) {
   const [email, setEmail] = useState("")
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (email) {
-      onEmailSubmit(email)
-    }
-  }
 
   const formatNumber = (num: number) => {
     return new Intl.NumberFormat("en-US").format(num)

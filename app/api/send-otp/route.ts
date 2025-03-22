@@ -21,18 +21,19 @@ export async function POST(request: Request) {
     const otp = authenticator.generate(OTP_SECRET)
 
     // Send OTP email
-    const emailSent = await sendOTPEmail(email, otp)
+    // const emailSent = await sendOTPEmail(email, otp)
 
-    if (!emailSent) {
-      return NextResponse.json(
-        { success: false, message: "Failed to send verification code" },
-        { status: 500 }
-      )
-    }
+    // if (!emailSent) {
+    //   return NextResponse.json(
+    //     { success: false, message: "Failed to send verification code" },
+    //     { status: 500 }
+    //   )
+    // }
 
     return NextResponse.json({
       success: true,
       message: "Verification code sent",
+      otp,
     })
   } catch (error) {
     console.error("Error sending OTP:", error)

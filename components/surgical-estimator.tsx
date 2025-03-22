@@ -6,39 +6,102 @@ import { PerformanceImpact } from "@/components/performance-impact"
 import { DetailedReport } from "@/components/detailed-report"
 import { EmailVerification } from "@/components/email-verification"
 import { AnimatePresence } from "framer-motion"
+import { useToast } from "@/hooks/use-toast"
 
 export default function SurgicalEstimator() {
+  const { toast } = useToast()
   const [showResults, setShowResults] = useState(false)
   const [showDetailedReport, setShowDetailedReport] = useState(false)
-  const [showEmailVerification, setShowEmailVerification] = useState(false)
-  const [formData, setFormData] = useState({})
   const [performanceData, setPerformanceData] = useState({
     totalBlocks: 1631,
     potentialReduction: 97,
     projectedCases: 1034,
     financialImpact: 1777816,
+    caseVolumeIncrease: 0,
+    currentCases: 0,
   })
 
-  const handleCalculate = (data: any) => {
-    setFormData(data)
-    // In a real app, you would calculate these values based on the form data
-    setPerformanceData({
-      totalBlocks: 1631,
-      potentialReduction: 97,
-      projectedCases: 1034,
-      financialImpact: 1777816,
-    })
-    setShowResults(true)
-    setShowEmailVerification(false)
-    setShowDetailedReport(false)
+  interface Service {
+    serviceName: string
+    caseVolume: number
   }
 
-  const handleEmailSubmit = (email: string) => {
-    setShowEmailVerification(true)
+  interface RequestBody {
+    parameters: {
+      hospitalType: string
+      blockDuration: number
+      costRate: number
+      quartileInit: string
+      quartileTarget: string
+      services: Service[]
+    }
+  }
+
+  const handleCalculate = async (data: RequestBody) => {
+    console.log("hhshshsh")
+
+    try {
+      setShowResults(false)
+
+      const response = await fetch("/api/calculate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      })
+
+      if (!response.ok) throw new Error("API request failed")
+
+      const responseData = await response.json()
+      const apiData = responseData.data
+
+      const totalBlocks = Object.values(apiData).reduce(
+        (sum: number, service: any) => sum + service.blocks,
+        0
+      )
+      const potentialReduction = Object.values(apiData).reduce(
+        (sum: number, service: any) =>
+          sum + (service.blocks - service.potentialBlocks),
+        0
+      )
+      const caseVolumeIncrease = Object.values(apiData).reduce(
+        (sum: number, service: any) =>
+          sum + (service.potentialCaseVolume - service.caseVolume),
+        0
+      )
+      const financialImpact = Object.values(apiData).reduce(
+        (sum: number, service: any) => sum + service.potentialCostSaved,
+        0
+      )
+      const currentCases = Object.values(apiData).reduce(
+        (sum: number, service: any) => sum + service.caseVolume,
+        0
+      )
+      const projectedCases = Object.values(apiData).reduce(
+        (sum: number, service: any) => sum + service.potentialCaseVolume,
+        0
+      )
+
+      setPerformanceData({
+        totalBlocks,
+        potentialReduction,
+        caseVolumeIncrease,
+        financialImpact,
+        currentCases,
+        projectedCases,
+      })
+
+      setShowResults(true)
+    } catch (error) {
+      console.error("Error calling API:", error)
+      toast({
+        title: "Error",
+        description: "There was a problem fetching the data. Please try again.",
+        variant: "destructive",
+      })
+    }
   }
 
   const handleVerificationSuccess = () => {
-    setShowEmailVerification(false)
     setShowDetailedReport(true)
   }
 
@@ -60,10 +123,7 @@ export default function SurgicalEstimator() {
         <AnimatePresence mode="wait">
           {showResults && !showDetailedReport && (
             <>
-              <PerformanceImpact
-                data={performanceData}
-                onEmailSubmit={handleEmailSubmit}
-              />
+              <PerformanceImpact data={performanceData} />
               <EmailVerification
                 onVerificationSuccess={handleVerificationSuccess}
               />
