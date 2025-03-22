@@ -13,13 +13,14 @@ export default function SurgicalEstimator() {
   const [showResults, setShowResults] = useState(false)
   const [showDetailedReport, setShowDetailedReport] = useState(false)
   const [performanceData, setPerformanceData] = useState({
-    totalBlocks: 1631,
-    potentialReduction: 97,
-    projectedCases: 1034,
-    financialImpact: 1777816,
+    totalBlocks: 0,
+    potentialReduction: 0,
+    projectedCases: 0,
+    financialImpact: 0,
     caseVolumeIncrease: 0,
     currentCases: 0,
   })
+  const [departmentDetails, setDepartmentDetails] = useState<any>({})
 
   interface Service {
     serviceName: string
@@ -38,8 +39,6 @@ export default function SurgicalEstimator() {
   }
 
   const handleCalculate = async (data: RequestBody) => {
-    console.log("hhshshsh")
-
     try {
       setShowResults(false)
 
@@ -90,7 +89,9 @@ export default function SurgicalEstimator() {
         projectedCases,
       })
 
+      setDepartmentDetails(apiData)
       setShowResults(true)
+      setShowDetailedReport(false)
     } catch (error) {
       console.error("Error calling API:", error)
       toast({
@@ -132,7 +133,9 @@ export default function SurgicalEstimator() {
         </AnimatePresence>
 
         <AnimatePresence mode="wait">
-          {showDetailedReport && <DetailedReport data={performanceData} />}
+          {showDetailedReport && (
+            <DetailedReport departmentDetails={departmentDetails} />
+          )}
         </AnimatePresence>
       </div>
     </div>
