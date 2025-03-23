@@ -6,12 +6,14 @@ interface ChipProps {
 }
 
 const Chip: React.FC<ChipProps> = ({ value, helperText }) => {
+  const isNegative = Number(value.replace(/[^0-9.-]+/g, "")) <= 0
+
   return (
-    <div className="inline-flex items-center px-4 py-2 rounded-full bg-gray-100 shadow text-green-800 font-medium text-lg">
-      {Number(value) <= 0 ? (
+    <div className="inline-flex items-center gap-2 rounded-full bg-[#2C615017] px-4 py-2 shadow text-[#2C6150]">
+      {isNegative ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 mr-2"
+          className="h-4 w-4"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -26,7 +28,7 @@ const Chip: React.FC<ChipProps> = ({ value, helperText }) => {
       ) : (
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 mr-2"
+          className="h-4 w-4"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -39,9 +41,10 @@ const Chip: React.FC<ChipProps> = ({ value, helperText }) => {
           />
         </svg>
       )}
-      <span>
-        <span className="font-bold">{value}</span> {helperText}
-      </span>
+      <span className="text-lg font-bold">{value}</span>
+      {helperText && (
+        <span className="text-base font-normal">{helperText}</span>
+      )}
     </div>
   )
 }

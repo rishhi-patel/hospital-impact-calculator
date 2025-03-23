@@ -68,6 +68,7 @@ export function SurgicalForm({
     initialValues: {
       departmentType: "Community",
       blockDuration: "440",
+      costRate: "40",
       currentPerformance: "Q2",
       comparisonLevel: "Q1",
       servicesError: "",
@@ -75,19 +76,19 @@ export function SurgicalForm({
     validationSchema: Yup.object({
       departmentType: Yup.string().required("Required"),
       blockDuration: Yup.string().required("Required"),
+      costRate: Yup.string().required("Required"),
       currentPerformance: Yup.string().required("Required"),
       comparisonLevel: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
       setLoading(true)
-      const services: Service[] = selectedServices
-        .map((serviceId) => {
-          const service = serviceCategories.find((cat) => cat.id === serviceId)
-          return service
-            ? { serviceName: service.name, caseVolume: 1000 }
-            : null
-        })
-        .filter((service): service is Service => service !== null)
+      const services: Service[] = selectedServices.map((id) => {
+        const service = serviceCategories.find((s) => s.id === id)
+        return {
+          serviceName: service?.name ?? id,
+          caseVolume: 1000,
+        }
+      })
 
       if (services.length === 0) {
         formik.setFieldError(
@@ -102,7 +103,7 @@ export function SurgicalForm({
         parameters: {
           hospitalType: values.departmentType,
           blockDuration: parseInt(values.blockDuration, 10),
-          costRate: 20,
+          costRate: parseFloat(values.costRate),
           quartileInit: values.currentPerformance,
           quartileTarget: values.comparisonLevel,
           services,
@@ -115,9 +116,10 @@ export function SurgicalForm({
   return (
     <Card className="p-6 shadow-sm border rounded-lg">
       <form onSubmit={formik.handleSubmit}>
-        <div className="space-y-6">
-          <div>
-            <Label htmlFor="departmentType">
+        <div className="space-y-8">
+          {/* Question blocks */}
+          <div className="grid md:grid-cols-2 gap-6 items-start">
+            <Label className="font-semibold">
               What type of surgical department do you work in?
             </Label>
             <Select
@@ -126,20 +128,21 @@ export function SurgicalForm({
                 formik.setFieldValue("departmentType", value)
               }
             >
-              <SelectTrigger id="departmentType" className="mt-2">
+              <SelectTrigger id="departmentType">
                 <SelectValue placeholder="Input" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Community">Community</SelectItem>
                 <SelectItem value="Academic">Academic</SelectItem>
               </SelectContent>
-            </Select>
+            </Select>{" "}
             {formik.touched.departmentType && formik.errors.departmentType ? (
               <div className="text-red-500">{formik.errors.departmentType}</div>
             ) : null}
           </div>
-          <div>
-            <Label htmlFor="blockDuration">
+
+          <div className="grid md:grid-cols-2 gap-6 items-start">
+            <Label className="font-semibold">
               What is the standard block duration in your surgical department?
             </Label>
             <Select
@@ -148,7 +151,7 @@ export function SurgicalForm({
                 formik.setFieldValue("blockDuration", value)
               }
             >
-              <SelectTrigger id="blockDuration" className="mt-2">
+              <SelectTrigger id="blockDuration">
                 <SelectValue placeholder="Input" />
               </SelectTrigger>
               <SelectContent>
@@ -157,7 +160,7 @@ export function SurgicalForm({
                 <SelectItem value="720">720 minutes (12 hours)</SelectItem>
                 <SelectItem value="440">440 minutes (Default)</SelectItem>
               </SelectContent>
-            </Select>
+            </Select>{" "}
             {formik.touched.blockDuration && formik.errors.blockDuration ? (
               <div className="text-red-500">{formik.errors.blockDuration}</div>
             ) : null}
@@ -217,9 +220,28 @@ export function SurgicalForm({
             ) : null}
           </div>
 
-          <div>
-            <Label htmlFor="currentPerformance">
-              How would you rate your department's current performance?
+          <div className="grid md:grid-cols-2 gap-6 items-start">
+            <Label className="font-semibold">
+              What is your department’s estimated hourly cost/revenue rate?
+            </Label>
+            <Select
+              value={formik.values.costRate}
+              onValueChange={(value) => formik.setFieldValue("costRate", value)}
+            >
+              <SelectTrigger id="costRate">
+                <SelectValue placeholder="Input" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="20">$20/hr</SelectItem>
+                <SelectItem value="40">$40/hr</SelectItem>
+                <SelectItem value="60">$60/hr</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6 items-start">
+            <Label className="font-semibold">
+              How would you rate your department’s current performance?
             </Label>
             <Select
               value={formik.values.currentPerformance}
@@ -227,7 +249,7 @@ export function SurgicalForm({
                 formik.setFieldValue("currentPerformance", value)
               }
             >
-              <SelectTrigger id="currentPerformance" className="mt-2">
+              <SelectTrigger id="currentPerformance">
                 <SelectValue placeholder="Input" />
               </SelectTrigger>
               <SelectContent>
@@ -245,8 +267,8 @@ export function SurgicalForm({
             ) : null}
           </div>
 
-          <div>
-            <Label htmlFor="comparisonLevel">
+          <div className="grid md:grid-cols-2 gap-6 items-start">
+            <Label className="font-semibold">
               What level of performance would you like to compare your
               department to?
             </Label>
@@ -256,7 +278,7 @@ export function SurgicalForm({
                 formik.setFieldValue("comparisonLevel", value)
               }
             >
-              <SelectTrigger id="comparisonLevel" className="mt-2">
+              <SelectTrigger id="comparisonLevel">
                 <SelectValue placeholder="Input" />
               </SelectTrigger>
               <SelectContent>
@@ -273,17 +295,18 @@ export function SurgicalForm({
             ) : null}
           </div>
 
-          <div className="flex justify-center pt-4">
+          {/* Submit */}
+          <div className="flex justify-center">
             <Button
               type="submit"
-              className="text-magnet border-magnet hover:bg-magnet hover:border-magnet hover:text-white px-8"
+              className="text-magnet border-magnet hover:bg-magnet hover:text-white px-8"
               disabled={loading}
               variant="outline"
             >
               {loading ? (
                 <div className="flex items-center">
                   <svg
-                    className="animate-spin h-5 w-5 mr-3 text-magnet"
+                    className="animate-spin h-5 w-5 mr-2 text-magnet"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
