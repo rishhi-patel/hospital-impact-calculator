@@ -182,7 +182,7 @@ export function SurgicalForm({
                       service && (
                         <div
                           key={service.id}
-                          className="flex items-center gap-1 px-4 py-2  bg-primary-light text-primary border border-gray-300 rounded-lg"
+                          className="flex items-center gap-1 px-4 py-2 bg-magnet-faint text-primary border border-gray-300 rounded-lg"
                           style={{ borderRadius: "8px !important" }}
                         >
                           {service.name}
