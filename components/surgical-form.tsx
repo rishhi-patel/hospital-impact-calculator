@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/input" // Assuming you have an Input component
 
 interface Service {
   serviceName: string
@@ -37,6 +38,7 @@ export function SurgicalForm({
   onCalculate: (data: RequestBody) => void
 }) {
   const [selectedServices, setSelectedServices] = useState<string[]>([])
+  const [caseVolumes, setCaseVolumes] = useState<{ [key: string]: number }>({})
   const [loading, setLoading] = useState(false)
 
   const serviceCategories = [
@@ -59,9 +61,17 @@ export function SurgicalForm({
   const toggleService = (serviceId: string) => {
     if (selectedServices.includes(serviceId)) {
       setSelectedServices(selectedServices.filter((id) => id !== serviceId))
+      const newCaseVolumes = { ...caseVolumes }
+      delete newCaseVolumes[serviceId]
+      setCaseVolumes(newCaseVolumes)
     } else {
       setSelectedServices([...selectedServices, serviceId])
+      setCaseVolumes({ ...caseVolumes, [serviceId]: 1000 })
     }
+  }
+
+  const handleCaseVolumeChange = (serviceId: string, volume: number) => {
+    setCaseVolumes({ ...caseVolumes, [serviceId]: volume })
   }
 
   const formik = useFormik({
@@ -86,7 +96,7 @@ export function SurgicalForm({
         const service = serviceCategories.find((s) => s.id === id)
         return {
           serviceName: service?.name ?? id,
-          caseVolume: 1000,
+          caseVolume: caseVolumes[id],
         }
       })
 
@@ -155,10 +165,9 @@ export function SurgicalForm({
                 <SelectValue placeholder="Input" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="240">240 minutes (4 hours)</SelectItem>
+                <SelectItem value="420">420 minutes (7 hours)</SelectItem>
                 <SelectItem value="480">480 minutes (8 hours)</SelectItem>
-                <SelectItem value="720">720 minutes (12 hours)</SelectItem>
-                <SelectItem value="440">440 minutes (Default)</SelectItem>
+                <SelectItem value="600">600 minutes (10 hours)</SelectItem>
               </SelectContent>
             </Select>{" "}
             {formik.touched.blockDuration && formik.errors.blockDuration ? (
@@ -214,11 +223,46 @@ export function SurgicalForm({
                     </button>
                   ))}
               </div>
+              {formik.errors.servicesError ? (
+                <div className="text-red-500">
+                  {formik.errors.servicesError}
+                </div>
+              ) : null}
             </div>
-            {formik.errors.servicesError ? (
-              <div className="text-red-500">{formik.errors.servicesError}</div>
-            ) : null}
           </div>
+
+          {selectedServices.length > 0 && (
+            <div className="mt-4">
+              <div>
+                {selectedServices.map((serviceId) => {
+                  const service = serviceCategories.find(
+                    (cat) => cat.id === serviceId
+                  )
+                  return (
+                    service && (
+                      <div className="grid md:grid-cols-2 gap-6 items-start">
+                        <Label className="font-semibold">
+                          {service.name} Case Volume
+                        </Label>
+                        <Input
+                          type="number"
+                          value={caseVolumes[service.id]}
+                          onChange={(e) =>
+                            handleCaseVolumeChange(
+                              service.id,
+                              parseInt(e.target.value, 10)
+                            )
+                          }
+                          placeholder="Case Volume"
+                          className="mt-2"
+                        />
+                      </div>
+                    )
+                  )
+                })}
+              </div>
+            </div>
+          )}
 
           <div className="grid md:grid-cols-2 gap-6 items-start">
             <Label className="font-semibold">
@@ -256,7 +300,7 @@ export function SurgicalForm({
                 <SelectItem value="Q3">Poor</SelectItem>
                 <SelectItem value="Q2">Average</SelectItem>
                 <SelectItem value="Q1">Good</SelectItem>
-                <SelectItem value="Q0">Excellent</SelectItem>
+                <SelectItem value="Best">Excellent</SelectItem>
               </SelectContent>
             </Select>
             {formik.touched.currentPerformance &&
@@ -285,7 +329,7 @@ export function SurgicalForm({
                 <SelectItem value="Q3">Poor</SelectItem>
                 <SelectItem value="Q2">Average</SelectItem>
                 <SelectItem value="Q1">Good</SelectItem>
-                <SelectItem value="Q0">Excellent</SelectItem>
+                <SelectItem value="Best">Excellent</SelectItem>
               </SelectContent>
             </Select>
             {formik.touched.comparisonLevel && formik.errors.comparisonLevel ? (
