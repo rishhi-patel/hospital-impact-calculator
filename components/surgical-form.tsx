@@ -57,6 +57,12 @@ export function SurgicalForm({
     { id: "vascular", name: "Vascular" },
     { id: "plastic_and_reconstructive", name: "Plastic and Reconstructive" },
   ]
+  const performanceLevels = {
+    Q3: "Poor",
+    Q2: "Average",
+    Q1: "Good",
+    Best: "Excellent",
+  }
 
   const toggleService = (serviceId: string) => {
     if (selectedServices.includes(serviceId)) {
@@ -122,6 +128,12 @@ export function SurgicalForm({
       setLoading(false)
     },
   })
+
+  const getFilteredComparisonLevels = () => {
+    const levels = Object.keys(performanceLevels)
+    const currentLevelIndex = levels.indexOf(formik.values.currentPerformance)
+    return levels.slice(currentLevelIndex + 1)
+  }
 
   return (
     <Card className="p-6 shadow-sm border rounded-lg">
@@ -289,9 +301,10 @@ export function SurgicalForm({
             </Label>
             <Select
               value={formik.values.currentPerformance}
-              onValueChange={(value) =>
+              onValueChange={(value) => {
                 formik.setFieldValue("currentPerformance", value)
-              }
+                formik.setFieldValue("comparisonLevel", "")
+              }}
             >
               <SelectTrigger id="currentPerformance">
                 <SelectValue placeholder="Input" />
@@ -326,10 +339,15 @@ export function SurgicalForm({
                 <SelectValue placeholder="Input" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Q3">Poor</SelectItem>
-                <SelectItem value="Q2">Average</SelectItem>
-                <SelectItem value="Q1">Good</SelectItem>
-                <SelectItem value="Best">Excellent</SelectItem>
+                {getFilteredComparisonLevels().map((level) => (
+                  <SelectItem key={level} value={level}>
+                    {performanceLevels[level as keyof typeof performanceLevels]
+                      ? performanceLevels[
+                          level as keyof typeof performanceLevels
+                        ]
+                      : level}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             {formik.touched.comparisonLevel && formik.errors.comparisonLevel ? (
