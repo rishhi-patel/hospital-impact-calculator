@@ -1,13 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ChevronDown, ChevronUp, Download } from "lucide-react"
 import { motion } from "framer-motion"
 import Chip from "./ui/Chip"
-import { generatePDF, generatePDFBlob } from "../lib/pdfUtils"
-import { sendEmailWithPDFBlob } from "@/lib/sendgrid"
+import { generatePDF } from "../lib/pdfUtils"
 
 interface DepartmentDetail {
   serviceName: string
@@ -53,15 +52,6 @@ export function DetailedReport({ departmentDetails }: DetailedReportProps) {
     // Generate PDF from the element with the given ID
     generatePDF("pdf-report")
   }
-
-  // useEffect(() => {
-  //   const sendEmail = async () => {
-  //     const email = "rishhi.dev@gmail.com" // Replace with the actual email
-  //     const pdfBlob = await generatePDFBlob()
-  //     await sendEmailWithPDFBlob(email, pdfBlob)
-  //   }
-  //   sendEmail()
-  // }, [])
 
   return (
     <motion.div
