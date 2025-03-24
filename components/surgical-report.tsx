@@ -68,191 +68,156 @@ export default function SurgicalReport({
               input.
             </p>
 
-            {/* Department Card */}
-            <div className="border rounded-lg p-6 mb-8">
-              <h3 className="font-medium mb-4">Cardiac Surgery Department</h3>
+            {/* Dynamic Department Cards */}
+            {Object.keys(departmentDetails).map((departmentKey) => {
+              const department = departmentDetails[departmentKey]
+              return (
+                <div key={departmentKey} className="border rounded-lg p-6 mb-8">
+                  <h3 className="font-medium mb-4">{department.serviceName}</h3>
 
-              <div className="mb-6">
-                <h4 className="text-sm text-gray-600 mb-2">
-                  Overall Performance Comparison Table (Before SurgiTwin vs.
-                  After SurgiTwin)
-                </h4>
+                  <div className="mb-6">
+                    <h4 className="text-sm text-gray-600 mb-2">
+                      Overall Performance Comparison Table (Before SurgiTwin vs.
+                      After SurgiTwin)
+                    </h4>
 
-                <div className="border rounded-lg overflow-hidden">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="bg-gray-50">
-                        <th className="text-left p-3 border-b">Metric</th>
-                        <th className="text-left p-3 border-b">
-                          Current Performance
-                        </th>
-                        <th className="text-left p-3 border-b">
-                          Optimized Performance
-                        </th>
-                        <th className="text-left p-3 border-b"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td className="p-3 border-b">Case Volume</td>
-                        <td className="p-3 border-b">1,800</td>
-                        <td className="p-3 border-b">1,881</td>
-                        <td className="p-3 border-b">
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-green-100 text-green-800">
-                            <ArrowUpIcon className="w-3 h-3 mr-1" />
-                            +81 cases
-                          </span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="p-3">Estimated Blocks Used</td>
-                        <td className="p-3">356</td>
-                        <td className="p-3">341</td>
-                        <td className="p-3">
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-green-100 text-green-800">
-                            <ArrowDownIcon className="w-3 h-3 mr-1" />
-                            -15 blocks
-                          </span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              <div className="mb-6">
-                <h4 className="text-sm text-gray-600 mb-2">
-                  Breakdown of Efficiency Improvements Table
-                </h4>
-
-                <div className="border rounded-lg overflow-hidden">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="bg-gray-50">
-                        <th className="text-left p-3 border-b">Category</th>
-                        <th className="text-left p-3 border-b">
-                          Additional Surgeries Performed
-                        </th>
-                        <th className="text-left p-3 border-b">
-                          Freed-Up Blocks
-                        </th>
-                        <th className="text-left p-3 border-b"></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td className="p-3 border-b">Planning Accuracy</td>
-                        <td className="p-3 border-b">+11 Cases</td>
-                        <td className="p-3 border-b">2 Blocks</td>
-                        <td className="p-3 border-b">
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-green-100 text-green-800">
-                            <ArrowUpIcon className="w-3 h-3 mr-1" />
-                            $32,441 saved
-                          </span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="p-3 border-b">Flow Smoothing</td>
-                        <td className="p-3 border-b">+15 Cases</td>
-                        <td className="p-3 border-b">3 Blocks</td>
-                        <td className="p-3 border-b">
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-green-100 text-green-800">
-                            <ArrowUpIcon className="w-3 h-3 mr-1" />
-                            $42,219 saved
-                          </span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="p-3">Priority Planning</td>
-                        <td className="p-3">+55 Cases</td>
-                        <td className="p-3">11 Blocks</td>
-                        <td className="p-3">
-                          <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-green-100 text-green-800">
-                            <ArrowUpIcon className="w-3 h-3 mr-1" />
-                            $159,614 saved
-                          </span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* Summary Stats */}
-              <div className="bg-gray-50 rounded-lg p-6">
-                <div className="grid grid-cols-3 gap-4">
-                  <div>
-                    <p className="text-sm text-emerald-700 font-medium mb-2">
-                      Total Cardiac Surgery Performance Impact
-                    </p>
-                    <div className="text-center">
-                      <p className="text-4xl font-bold text-emerald-800">81</p>
-                      <p className="text-xs text-emerald-700 text-center">
-                        additional surgeries
-                        <br />
-                        performed
-                      </p>
+                    <div className="border rounded-lg overflow-hidden">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="bg-gray-50">
+                            <th className="text-left p-3 border-b">Metric</th>
+                            <th className="text-left p-3 border-b">
+                              Current Performance
+                            </th>
+                            <th className="text-left p-3 border-b">
+                              Optimized Performance
+                            </th>
+                            <th className="text-left p-3 border-b"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td className="p-3 border-b">Case Volume</td>
+                            <td className="p-3 border-b">
+                              {department.caseVolume}
+                            </td>
+                            <td className="p-3 border-b">
+                              {department.potentialCaseVolume}
+                            </td>
+                            <td className="p-3 border-b">
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                                <ArrowUpIcon className="w-3 h-3 mr-1" />+
+                                {department.potentialCaseVolume -
+                                  department.caseVolume}{" "}
+                                cases
+                              </span>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td className="p-3">Estimated Blocks Used</td>
+                            <td className="p-3">{department.blocks}</td>
+                            <td className="p-3">
+                              {department.potentialBlocks}
+                            </td>
+                            <td className="p-3">
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                                <ArrowDownIcon className="w-3 h-3 mr-1" />-
+                                {department.blocks - department.potentialBlocks}{" "}
+                                blocks
+                              </span>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-4xl font-bold text-emerald-800">
-                      11
+
+                  <div className="mb-6">
+                    <h4 className="text-sm text-gray-600 mb-2">
+                      Breakdown of Efficiency Improvements Table
+                    </h4>
+
+                    <div className="border rounded-lg overflow-hidden">
+                      <table className="w-full">
+                        <thead>
+                          <tr className="bg-gray-50">
+                            <th className="text-left p-3 border-b">Category</th>
+                            <th className="text-left p-3 border-b">
+                              Additional Surgeries Performed
+                            </th>
+                            <th className="text-left p-3 border-b">
+                              Freed-Up Blocks
+                            </th>
+                            <th className="text-left p-3 border-b"></th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {department.potentialByBucket.map((bucket) => (
+                            <tr key={bucket.bucketName}>
+                              <td className="p-3 border-b">
+                                {bucket.bucketName}
+                              </td>
+                              <td className="p-3 border-b">
+                                +{bucket.volumeIncreased} Cases
+                              </td>
+                              <td className="p-3 border-b">
+                                {bucket.blocksReduced} Blocks
+                              </td>
+                              <td className="p-3 border-b">
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                                  <ArrowUpIcon className="w-3 h-3 mr-1" />$
+                                  {bucket.costSaved.toLocaleString()} saved
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
-                    <p className="text-xs text-emerald-700">
-                      freed-up
-                      <br />
-                      surgery blocks
-                    </p>
                   </div>
-                  <div className="text-center">
-                    <div className="text-4xl font-bold text-emerald-800">
-                      $234,274
+
+                  {/* Summary Stats */}
+                  <div className="bg-gray-50 rounded-lg p-6">
+                    <div className="grid grid-cols-3 gap-4">
+                      <div>
+                        <p className="text-sm text-emerald-700 font-medium mb-2">
+                          Total {department.serviceName} Performance Impact
+                        </p>
+                        <div className="text-center">
+                          <p className="text-4xl font-bold text-emerald-800">
+                            {department.potentialCaseVolume -
+                              department.caseVolume}
+                          </p>
+                          <p className="text-xs text-emerald-700 text-center">
+                            additional surgeries
+                            <br />
+                            performed
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-4xl font-bold text-emerald-800">
+                          {department.blocks - department.potentialBlocks}
+                        </div>
+                        <p className="text-xs text-emerald-700">
+                          freed-up
+                          <br />
+                          surgery blocks
+                        </p>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-4xl font-bold text-emerald-800">
+                          ${department.potentialCostSaved.toLocaleString()}
+                        </div>
+                        <p className="text-xs text-emerald-700">
+                          in cost savings
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-xs text-emerald-700">in cost savings</p>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            {/* Key Definitions */}
-            <div className="mb-8">
-              <h3 className="text-lg font-medium text-emerald-800 mb-3">
-                Key Definitions
-              </h3>
-
-              <div className="space-y-4">
-                <div>
-                  <p className="font-medium text-emerald-700">
-                    Planning Accuracy
-                  </p>
-                  <p className="text-sm text-gray-700">
-                    SurgiTwin™ improves planning accuracy by aligning estimated
-                    case durations with actual times, reducing over- and
-                    under-scheduling.
-                  </p>
-                </div>
-
-                <div>
-                  <p className="font-medium text-emerald-700">Flow Smoothing</p>
-                  <p className="text-sm text-gray-700">
-                    SurgiTwin™ minimizes disruptions like same-day cancellations
-                    and delays to ensure a smoother, more reliable surgical
-                    schedule.
-                  </p>
-                </div>
-
-                <div>
-                  <p className="font-medium text-emerald-700">
-                    Priority Planning
-                  </p>
-                  <p className="text-sm text-gray-700">
-                    SurgiTwin™ optimizes case start times and turnaround times
-                    to help departments fit more surgeries into available OR
-                    blocks.
-                  </p>
-                </div>
-              </div>
-            </div>
+              )
+            })}
           </div>
         </main>
 

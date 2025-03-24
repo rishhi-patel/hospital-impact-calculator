@@ -121,7 +121,6 @@ export default function SurgicalEstimator() {
 
       <div className="space-y-8">
         <SurgicalForm onCalculate={handleCalculate} />
-        <DetailedReport departmentDetails={departmentDetails} />
 
         <AnimatePresence mode="wait">
           {showResults && (
