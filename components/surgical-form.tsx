@@ -83,7 +83,7 @@ export function SurgicalForm({
   const formik = useFormik({
     initialValues: {
       departmentType: "Community",
-      blockDuration: "440",
+      blockDuration: "420",
       costRate: "40",
       currentPerformance: "Q2",
       comparisonLevel: "Q1",
