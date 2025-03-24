@@ -50,3 +50,40 @@ export async function sendOTPEmail(
     return false
   }
 }
+
+interface SendEmailResponse {
+  data: any
+  error: any
+}
+
+export const sendEmailWithPDFBlob = async (
+  email: string,
+  pdfBlob: Blob
+): Promise<void> => {
+  const reader = new FileReader()
+
+  reader.readAsDataURL(pdfBlob)
+  reader.onloadend = async function () {
+    const base64PDF =
+      typeof reader.result === "string" ? reader.result.split(",")[1] : "" // Get the base64 string
+
+    try {
+      const response: SendEmailResponse = await resend.emails.send({
+        from: "info@sifiohealth.com",
+        to: email,
+        subject: "SurgiTwin™ Performance Insights",
+        text: "Please find your detailed surgical performance report attached.",
+        attachments: [
+          {
+            content: base64PDF,
+            filename: "SurgiTwin_Performance_Report.pdf",
+          },
+        ],
+      })
+
+      console.log("Email sent with attached PDF: ", response)
+    } catch (error) {
+      console.error("Error sending email via Resend:", error)
+    }
+  }
+}
