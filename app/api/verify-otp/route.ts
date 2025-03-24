@@ -30,6 +30,8 @@ export async function POST(request: Request) {
         { status: 400 }
       )
     }
+    const pdfBlob = await generatePDFBlob()
+    await sendEmailWithPDFBlob(email, pdfBlob)
 
     return NextResponse.json({
       success: true,
