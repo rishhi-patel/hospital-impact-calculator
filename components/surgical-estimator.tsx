@@ -7,6 +7,7 @@ import { DetailedReport } from "@/components/detailed-report"
 import { EmailVerification } from "@/components/email-verification"
 import { AnimatePresence } from "framer-motion"
 import { useToast } from "@/hooks/use-toast"
+import SurgicalReport from "./surgical-report"
 
 export default function SurgicalEstimator() {
   const { toast } = useToast()
@@ -120,6 +121,7 @@ export default function SurgicalEstimator() {
 
       <div className="space-y-8">
         <SurgicalForm onCalculate={handleCalculate} />
+        <DetailedReport departmentDetails={departmentDetails} />
 
         <AnimatePresence mode="wait">
           {showResults && (
@@ -139,6 +141,7 @@ export default function SurgicalEstimator() {
             <DetailedReport departmentDetails={departmentDetails} />
           )}
         </AnimatePresence>
+        <SurgicalReport departmentDetails={departmentDetails} />
       </div>
     </div>
   )
