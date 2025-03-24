@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -36,20 +35,15 @@ export function EmailVerification({
       value = value.slice(0, 1)
     }
 
-    if (value && !/^\d+$/.test(value)) {
-      return
-    }
+    if (value && !/^\d+$/.test(value)) return
 
     const newOtp = [...otp]
     newOtp[index] = value
     setOtp(newOtp)
 
-    // Auto-focus next input
     if (value && index < 5) {
       const nextInput = document.getElementById(`otp-${index + 1}`)
-      if (nextInput) {
-        nextInput.focus()
-      }
+      if (nextInput) nextInput.focus()
     }
   }
 
@@ -59,10 +53,21 @@ export function EmailVerification({
   ) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       const prevInput = document.getElementById(`otp-${index - 1}`)
-      if (prevInput) {
-        prevInput.focus()
-      }
+      if (prevInput) prevInput.focus()
     }
+  }
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault()
+    const pasted = e.clipboardData.getData("text").trim()
+
+    if (!/^\d{6}$/.test(pasted)) return
+
+    const digits = pasted.split("").slice(0, 6)
+    setOtp(digits)
+
+    const lastInput = document.getElementById("otp-5")
+    if (lastInput) lastInput.focus()
   }
 
   const sendOTP = async () => {
@@ -78,17 +83,12 @@ export function EmailVerification({
     try {
       const response = await fetch("/api/send-otp", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       })
 
       const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to send verification code")
-      }
+      if (!response.ok) throw new Error(data.message || "Failed to send OTP")
 
       setIsOtpVisible(true)
     } catch (error) {
@@ -119,29 +119,27 @@ export function EmailVerification({
     try {
       const response = await fetch("/api/verify-otp", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, otp: otpValue }),
       })
 
       const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || "Failed to verify code")
-      }
+      if (!response.ok) throw new Error(data.message || "Failed to verify OTP")
 
       toast({
         title: "Verification successful",
         description: "Your email has been verified successfully.",
       })
+
       onVerificationSuccess()
     } catch (error) {
       console.error("Error verifying OTP:", error)
       toast({
         title: "Error",
         description:
-          error instanceof Error ? error.message : "Failed to verify code",
+          error instanceof Error
+            ? error.message
+            : "Failed to verify verification code",
         variant: "destructive",
       })
     }
@@ -203,7 +201,7 @@ export function EmailVerification({
             <>
               <div>
                 <Label>Enter verification code sent to your email</Label>
-                <div className="flex gap-2 mt-2">
+                <div className="flex justify-center gap-2 mt-2">
                   {otp.map((digit, index) => (
                     <Input
                       key={index}
@@ -214,9 +212,8 @@ export function EmailVerification({
                       value={digit}
                       onChange={(e) => handleChange(index, e.target.value)}
                       onKeyDown={(e) => handleKeyDown(index, e)}
-                      className={`w-12 h-12 text-center text-lg ${
-                        index === 0 ? "border-primary" : ""
-                      }`}
+                      onPaste={handlePaste}
+                      className="w-12 h-12 text-center text-lg"
                       autoFocus={index === 0}
                     />
                   ))}

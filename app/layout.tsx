@@ -1,10 +1,10 @@
-import type { Metadata } from 'next'
-import './globals.css'
+import type { Metadata } from "next"
+import "./globals.css"
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: "Hospital Impact Calculator",
+  description: "Created by Sifio Health",
+  generator: "Sifio Health",
 }
 
 export default function RootLayout({

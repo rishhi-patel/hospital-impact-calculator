@@ -1,13 +1,8 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
 import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
-import { Label } from "@/components/ui/label"
 
 type PerformanceData = {
   totalBlocks: number
@@ -21,19 +16,15 @@ type PerformanceImpactProps = {
 }
 
 export function PerformanceImpact({ data }: PerformanceImpactProps) {
-  const [email, setEmail] = useState("")
+  const formatNumber = (num: number) =>
+    new Intl.NumberFormat("en-US").format(num)
 
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat("en-US").format(num)
-  }
-
-  const formatCurrency = (num: number) => {
-    return new Intl.NumberFormat("en-US", {
+  const formatCurrency = (num: number) =>
+    new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       maximumFractionDigits: 0,
     }).format(num)
-  }
 
   return (
     <motion.div
@@ -45,24 +36,27 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
       <Card className="p-6 shadow-sm border rounded-lg">
         <div className="text-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900">
-            Your Surgery Department's Performance Impact
+            Your Surgery Department’s Performance Impact
           </h2>
           <p className="text-gray-600 mt-1">
-            Based on your input, here's your hospital's estimated performance
+            Based on your input, here’s your hospital’s estimated performance
             impact:
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div className="flex items-center bg-gray-50 p-4 rounded-lg">
-            <div className="bg-teal-100 text-teal-800 p-4 rounded-lg mr-4">
-              <div className="font-bold text-2xl">
+        <div className="space-y-4 mb-6">
+          {/* Total Surgical Blocks */}
+          <div className="flex items-center bg-gray-50 p-4 rounded-lg border border-transparent">
+            <div className="flex items-center justify-center bg-[#2C615017] text-[#2C6150] px-4 py-2 rounded-lg mr-4 min-w-[25%]">
+              <div className="font-bold text-2xl mr-[5px]">
                 {formatNumber(data.totalBlocks)}
               </div>
-              <div className="text-sm">blocks</div>
+              <div className="text-sm"> blocks</div>
             </div>
             <div>
-              <div className="font-medium">Total Surgical Blocks Estimate</div>
+              <div className="font-semibold">
+                Total Surgical Blocks Estimate
+              </div>
               <div className="text-sm text-gray-600">
                 You have an estimated {formatNumber(data.totalBlocks)} blocks
                 based on your services
@@ -70,31 +64,37 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
             </div>
           </div>
 
-          <div className="flex items-center bg-gray-50 p-4 rounded-lg">
-            <div className="bg-teal-100 text-teal-800 p-4 rounded-lg mr-4">
-              <div className="font-bold text-2xl">
-                {data.potentialReduction}
+          {/* Potential Block Reduction */}
+          <div className="flex items-center bg-gray-50 p-4 rounded-lg border border-transparent">
+            <div className="flex  items-center justify-center bg-[#2C615017] text-[#2C6150] px-4 py-2 rounded-lg mr-4  min-w-[25%]">
+              <div className="font-bold text-2xl mr-[5px]">
+                {formatNumber(data.potentialReduction)}
+                {"  "}
               </div>
               <div className="text-sm">blocks</div>
             </div>
             <div>
-              <div className="font-medium">Potential Block Reduction</div>
+              <div className="font-semibold">Potential Block Reduction</div>
               <div className="text-sm text-gray-600">
                 By improving efficiency, you could reduce this total by{" "}
-                {data.potentialReduction} blocks.
+                {formatNumber(data.potentialReduction)} blocks.
               </div>
             </div>
           </div>
 
-          <div className="flex items-center bg-gray-50 p-4 rounded-lg">
-            <div className="bg-teal-100 text-teal-800 p-4 rounded-lg mr-4">
-              <div className="font-bold text-2xl">
+          {/* Projected Case Volume Increase */}
+          <div className="flex items-center bg-gray-50 p-4 rounded-lg border border-transparent">
+            <div className="flex  items-center justify-center bg-[#2C615017] text-[#2C6150] px-4 py-2 rounded-lg mr-4  min-w-[25%]">
+              <div className="font-bold text-2xl mr-[5px]">
                 {formatNumber(data.projectedCases)}
+                {"  "}
               </div>
               <div className="text-sm">cases</div>
             </div>
             <div>
-              <div className="font-medium">Projected Case Volume Increase</div>
+              <div className="font-semibold">
+                Projected Case Volume Increase
+              </div>
               <div className="text-sm text-gray-600">
                 You could perform an additional{" "}
                 {formatNumber(data.projectedCases)} cases per year.
@@ -102,14 +102,15 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
             </div>
           </div>
 
-          <div className="flex items-center bg-gray-50 p-4 rounded-lg">
-            <div className="bg-teal-100 text-teal-800 p-4 rounded-lg mr-4">
+          {/* Financial Impact */}
+          <div className="flex items-center bg-gray-50 p-4 rounded-lg border border-transparent">
+            <div className="flex  items-center justify-center bg-[#2C615017] text-[#2C6150] px-4 py-2 rounded-lg mr-4  min-w-[25%]">
               <div className="font-bold text-2xl">
                 {formatCurrency(data.financialImpact)}
               </div>
             </div>
             <div>
-              <div className="font-medium">
+              <div className="font-semibold">
                 Financial Impact (Cost Savings or Revenue Increase)
               </div>
               <div className="text-sm text-gray-600">
@@ -119,40 +120,6 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
             </div>
           </div>
         </div>
-
-        {/* <div className="mt-8">
-          <p className="text-center mb-4">
-            These improvements come from key factors such as{" "}
-            <span className="font-medium text-primary">Planning Accuracy, Flow Smoothing,</span> and{" "}
-            <span className="font-medium text-primary">Priority Planning</span>. To see how each factor impacts your
-            hospital's efficiency, enter your email below.
-          </p>
-          <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-            <div className="mb-4">
-              <Label htmlFor="email" className="block mb-2">
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full bg-blue-50"
-              />
-            </div>
-            <div className="flex justify-end">
-              <Button
-                type="submit"
-                variant="outline"
-                className="border-primary text-primary hover:bg-primary hover:text-white"
-              >
-                Get Detailed Report
-              </Button>
-            </div>
-          </form>
-        </div> */}
       </Card>
     </motion.div>
   )

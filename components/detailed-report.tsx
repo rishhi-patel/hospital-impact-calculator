@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ChevronDown, ChevronUp, Download } from "lucide-react"
 import { motion } from "framer-motion"
+import Chip from "./ui/Chip"
 
 interface DepartmentDetail {
   serviceName: string
@@ -115,7 +116,10 @@ export function DetailedReport({ departmentDetails }: DetailedReportProps) {
                               {formatNumber(dept.potentialCaseVolume)}
                             </td>
                             <td className="p-2 text-right text-green-600">
-                              +{formatNumber(caseDiff)} cases
+                              <Chip
+                                value={formatNumber(caseDiff)}
+                                helperText="cases"
+                              />{" "}
                             </td>
                           </tr>
                           <tr className="border-t">
@@ -127,7 +131,10 @@ export function DetailedReport({ departmentDetails }: DetailedReportProps) {
                               {formatNumber(dept.potentialBlocks)}
                             </td>
                             <td className="p-2 text-right text-green-600">
-                              {formatNumber(blockDiff)} blocks
+                              <Chip
+                                value={formatNumber(blockDiff)}
+                                helperText="blocks"
+                              />{" "}
                             </td>
                           </tr>
                         </tbody>
@@ -160,7 +167,12 @@ export function DetailedReport({ departmentDetails }: DetailedReportProps) {
                                 {formatNumber(improve.blocksReduced)} Blocks
                               </td>
                               <td className="p-2 text-right text-green-600">
-                                {formatCurrency(improve.costSaved)} saved
+                                <Chip
+                                  value={formatCurrency(
+                                    Math.abs(improve.costSaved)
+                                  )}
+                                  helperText="saved"
+                                />{" "}
                               </td>
                             </tr>
                           ))}
@@ -169,27 +181,27 @@ export function DetailedReport({ departmentDetails }: DetailedReportProps) {
                     </div>
 
                     <div className="grid grid-cols-3 gap-4 mt-6 text-center">
-                      <div className="bg-teal-50 p-4 rounded-lg">
-                        <div className="text-3xl font-bold text-teal-700">
+                      <div className="bg-magnet-faint p-4 rounded-lg">
+                        <div className="text-3xl font-bold text-magnet">
                           {formatNumber(caseDiff)}
                         </div>
-                        <div className="text-sm text-teal-600">
+                        <div className="text-sm text-magnet">
                           additional surgeries per year
                         </div>
                       </div>
-                      <div className="bg-teal-50 p-4 rounded-lg">
-                        <div className="text-3xl font-bold text-teal-700">
+                      <div className="bg-magnet-faint p-4 rounded-lg">
+                        <div className="text-3xl font-bold text-magnet">
                           {formatNumber(-blockDiff)}
                         </div>
-                        <div className="text-sm text-teal-600">
+                        <div className="text-sm text-magnet">
                           freed-up surgery blocks
                         </div>
                       </div>
-                      <div className="bg-teal-50 p-4 rounded-lg">
-                        <div className="text-3xl font-bold text-teal-700">
+                      <div className="bg-magnet-faint p-4 rounded-lg">
+                        <div className="text-3xl font-bold text-magnet">
                           {formatCurrency(dept.potentialCostSaved)}
                         </div>
-                        <div className="text-sm text-teal-600">
+                        <div className="text-sm text-magnet">
                           in cost savings
                         </div>
                       </div>
