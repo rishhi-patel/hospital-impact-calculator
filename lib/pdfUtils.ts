@@ -1,6 +1,4 @@
 // utils/pdfUtils.ts
-
-import { jsPDF } from "jspdf"
 import html2pdf from "html2pdf.js"
 
 // Function to generate PDF from an HTML element
@@ -20,5 +18,9 @@ export const generatePDF = (elementId: string): void => {
     jsPDF: { unit: "in", format: "letter", orientation: "portrait" },
   }
   // Generate the PDF from the HTML element
-  html2pdf().from(element).set(options).save()
+  if (typeof window !== "undefined") {
+    html2pdf().from(element).set(options).save()
+  } else {
+    console.error("SSR is not supported for PDF generation")
+  }
 }
