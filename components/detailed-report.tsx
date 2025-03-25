@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { ChevronDown, ChevronUp, Download } from "lucide-react"
 import { motion } from "framer-motion"
 import Chip from "./ui/Chip"
+import { generatePDF } from "../lib/pdfUtils"
 
 interface DepartmentDetail {
   serviceName: string
@@ -48,7 +49,8 @@ export function DetailedReport({ departmentDetails }: DetailedReportProps) {
   }
 
   const handleDownload = () => {
-    alert("Report download functionality would be implemented here")
+    // Generate PDF from the element with the given ID
+    generatePDF("pdf-report")
   }
 
   return (
