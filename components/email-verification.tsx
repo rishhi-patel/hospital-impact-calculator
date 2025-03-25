@@ -157,7 +157,8 @@ export function EmailVerification({
         body: JSON.stringify({ email }),
       })
 
-      const data = await response.json()
+      const text = await response.text()
+      const data = text ? JSON.parse(text) : {}
       if (!response.ok)
         throw new Error(
           data.message || "Failed to create/update contact in HubSpot"

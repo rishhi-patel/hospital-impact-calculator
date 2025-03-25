@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 
 // Fetch all contacts
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const response = await fetch(
       "https://api.hubapi.com/contacts/v1/lists/all/contacts/all",
@@ -93,7 +93,8 @@ export async function POST(req: NextRequest) {
         throw new Error(errorData.message || "Failed to update contact")
       }
 
-      const updatedContact = await updateResponse.json()
+      const updatedContact =
+        updateResponse.status === 204 ? {} : await updateResponse.json()
       return NextResponse.json(updatedContact, { status: 200 })
     } else {
       // If contact doesn't exist, create a new contact
