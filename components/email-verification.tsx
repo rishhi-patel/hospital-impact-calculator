@@ -131,6 +131,9 @@ export function EmailVerification({
         description: "Your email has been verified successfully.",
       })
 
+      // Now call the HubSpot API to create or update the contact
+      await handleHubSpotContact(email)
+
       onVerificationSuccess()
     } catch (error) {
       console.error("Error verifying OTP:", error)
@@ -140,6 +143,35 @@ export function EmailVerification({
           error instanceof Error
             ? error.message
             : "Failed to verify verification code",
+        variant: "destructive",
+      })
+    }
+  }
+
+  const handleHubSpotContact = async (email: string): Promise<void> => {
+    try {
+      // Create or update contact in HubSpot by calling your API
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      })
+
+      const data = await response.json()
+      if (!response.ok)
+        throw new Error(
+          data.message || "Failed to create/update contact in HubSpot"
+        )
+
+      console.log("HubSpot contact created/updated:", data)
+    } catch (error) {
+      console.error("Error with HubSpot API:", error)
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Failed to create or update HubSpot contact",
         variant: "destructive",
       })
     }
