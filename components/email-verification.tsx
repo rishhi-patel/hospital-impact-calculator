@@ -131,7 +131,7 @@ export function EmailVerification({
         description: "Your email has been verified successfully.",
       })
 
-      // Now call the HubSpot API to create or update the contact
+      //call the HubSpot API to create or update the contact
       await handleHubSpotContact(email)
 
       onVerificationSuccess()
@@ -150,7 +150,7 @@ export function EmailVerification({
 
   const handleHubSpotContact = async (email: string): Promise<void> => {
     try {
-      // Create or update contact in HubSpot by calling your API
+      // Create or update contact in HubSpot
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
