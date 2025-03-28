@@ -138,7 +138,7 @@ export async function handler(req: NextRequest) {
   if (req.method === "POST") {
     return POST(req)
   } else if (req.method === "GET") {
-    return GET(req)
+    return GET()
   } else {
     return NextResponse.json({ message: "Method Not Allowed" }, { status: 405 })
   }

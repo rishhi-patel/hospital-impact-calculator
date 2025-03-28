@@ -121,11 +121,11 @@ export default function SurgicalEstimator() {
 
       <div className="space-y-8">
         <SurgicalForm onCalculate={handleCalculate} />
-
         <AnimatePresence mode="wait">
           {showResults && (
             <>
-              <PerformanceImpact data={performanceData} />
+              <PerformanceImpact data={performanceData} />{" "}
+              <DetailedReport departmentDetails={departmentDetails} />
               {!showDetailedReport && (
                 <EmailVerification
                   onVerificationSuccess={handleVerificationSuccess}
