@@ -22,15 +22,28 @@ type DetailedReportProps = {
 export default function SurgicalReport({
   departmentDetails,
 }: DetailedReportProps) {
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat("en-US").format(num)
+  }
+
+  const formatCurrency = (num: number) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    }).format(num)
+  }
   return (
     <div
-      style={{
-        visibility: "hidden", // Make it invisible but still part of the layout
-        position: "absolute", // Remove it from the flow but still in the DOM
-        width: "0",
-        height: "0",
-        display: "none",
-      }}
+      style={
+        {
+          // visibility: "hidden", // Make it invisible but still part of the layout
+          // position: "absolute", // Remove it from the flow but still in the DOM
+          // width: "0",
+          // height: "0",
+          // display: "none",
+        }
+      }
     >
       <div
         className="flex flex-col min-h-screen bg-white"
@@ -73,7 +86,9 @@ export default function SurgicalReport({
               const department = departmentDetails[departmentKey]
               return (
                 <div key={departmentKey} className="border rounded-lg p-6 mb-8">
-                  <h3 className="font-medium mb-4">{department.serviceName}</h3>
+                  <h3 className="font-medium mb-4">
+                    {departmentKey} Surgery Department
+                  </h3>
 
                   <div className="mb-6">
                     <h4 className="text-sm text-gray-600 mb-2">
@@ -105,7 +120,7 @@ export default function SurgicalReport({
                               {department.potentialCaseVolume}
                             </td>
                             <td className="p-3 border-b">
-                              <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-magnet-faint text-magnet">
                                 <ArrowUpIcon className="w-3 h-3 mr-1" />+
                                 {department.potentialCaseVolume -
                                   department.caseVolume}{" "}
@@ -120,7 +135,7 @@ export default function SurgicalReport({
                               {department.potentialBlocks}
                             </td>
                             <td className="p-3">
-                              <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-magnet-faint text-magnet">
                                 <ArrowDownIcon className="w-3 h-3 mr-1" />-
                                 {department.blocks - department.potentialBlocks}{" "}
                                 blocks
@@ -164,7 +179,7 @@ export default function SurgicalReport({
                                 {bucket.blocksReduced} Blocks
                               </td>
                               <td className="p-3 border-b">
-                                <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-magnet-faint text-magnet">
                                   <ArrowUpIcon className="w-3 h-3 mr-1" />$
                                   {bucket.costSaved.toLocaleString()} saved
                                 </span>
@@ -178,24 +193,25 @@ export default function SurgicalReport({
 
                   {/* Summary Stats */}
                   <div className="bg-gray-50 rounded-lg p-6">
-                    <div className="grid grid-cols-3 gap-4">
-                      <div>
+                    <div className="grid grid-cols-10 gap-4">
+                      <div className="col-span-4">
                         <p className="text-sm text-emerald-700 font-medium mb-2">
-                          Total {department.serviceName} Performance Impact
+                          Total {departmentKey} Surgery Department Performance
+                          Impact
                         </p>
-                        <div className="text-center">
-                          <p className="text-4xl font-bold text-emerald-800">
-                            {department.potentialCaseVolume -
-                              department.caseVolume}
-                          </p>
-                          <p className="text-xs text-emerald-700 text-center">
-                            additional surgeries
-                            <br />
-                            performed
-                          </p>
-                        </div>
                       </div>
-                      <div className="text-center">
+                      <div className="col-span-2 text-center">
+                        <p className="text-4xl font-bold text-emerald-800">
+                          {department.potentialCaseVolume -
+                            department.caseVolume}
+                        </p>
+                        <p className="text-xs text-emerald-700 text-center">
+                          additional surgeries
+                          <br />
+                          performed
+                        </p>
+                      </div>
+                      <div className="col-span-2 text-center">
                         <div className="text-4xl font-bold text-emerald-800">
                           {department.blocks - department.potentialBlocks}
                         </div>
@@ -205,7 +221,7 @@ export default function SurgicalReport({
                           surgery blocks
                         </p>
                       </div>
-                      <div className="text-center">
+                      <div className="col-span-2 text-center">
                         <div className="text-4xl font-bold text-emerald-800">
                           ${department.potentialCostSaved.toLocaleString()}
                         </div>
