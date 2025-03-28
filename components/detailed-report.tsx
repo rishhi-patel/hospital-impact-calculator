@@ -121,7 +121,7 @@ export function DetailedReport({ departmentDetails }: DetailedReportProps) {
                             <td className="p-2 text-right">
                               {formatNumber(dept.potentialCaseVolume)}
                             </td>
-                            <td className="p-2 text-right text-green-600">
+                            <td className="p-2 text-right text-magnet">
                               <Chip
                                 value={formatNumber(caseDiff)}
                                 helperText="cases"
@@ -136,7 +136,7 @@ export function DetailedReport({ departmentDetails }: DetailedReportProps) {
                             <td className="p-2 text-right">
                               {formatNumber(dept.potentialBlocks)}
                             </td>
-                            <td className="p-2 text-right text-green-600">
+                            <td className="p-2 text-right text-magnet">
                               <Chip
                                 value={formatNumber(blockDiff)}
                                 helperText="blocks"
@@ -172,7 +172,7 @@ export function DetailedReport({ departmentDetails }: DetailedReportProps) {
                               <td className="p-2 text-right">
                                 {formatNumber(improve.blocksReduced)} Blocks
                               </td>
-                              <td className="p-2 text-right text-green-600">
+                              <td className="p-2 text-right text-magnet">
                                 <Chip
                                   value={formatCurrency(
                                     Math.abs(improve.costSaved)
