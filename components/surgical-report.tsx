@@ -33,7 +33,15 @@ export default function SurgicalReport({
     }).format(num)
 
   return (
-    <div>
+    <div
+      style={{
+        visibility: "hidden", // Make it invisible but still part of the layout
+        position: "absolute", // Remove it from the flow but still in the DOM
+        width: "0",
+        height: "0",
+        display: "none",
+      }}
+    >
       <div
         className="flex flex-col min-h-screen bg-white"
         id="pdf-report"
