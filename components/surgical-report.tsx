@@ -22,36 +22,22 @@ type DetailedReportProps = {
 export default function SurgicalReport({
   departmentDetails,
 }: DetailedReportProps) {
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat("en-US").format(num)
-  }
+  const formatNumber = (num: number) =>
+    new Intl.NumberFormat("en-US").format(num)
 
-  const formatCurrency = (num: number) => {
-    return new Intl.NumberFormat("en-US", {
+  const formatCurrency = (num: number) =>
+    new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       maximumFractionDigits: 0,
     }).format(num)
-  }
+
   return (
-    <div
-      style={
-        {
-          // visibility: "hidden", // Make it invisible but still part of the layout
-          // position: "absolute", // Remove it from the flow but still in the DOM
-          // width: "0",
-          // height: "0",
-          // display: "none",
-        }
-      }
-    >
+    <div>
       <div
         className="flex flex-col min-h-screen bg-white"
         id="pdf-report"
-        style={{
-          margin: 0,
-          padding: 0,
-        }}
+        style={{ margin: 0, padding: 0 }}
       >
         {/* Header */}
         <header className="bg-emerald-800 text-white p-4">
@@ -67,7 +53,14 @@ export default function SurgicalReport({
         <main className="flex-1 max-w-6xl mx-auto w-full p-6">
           <div className="flex justify-between items-center border-b pb-4 mb-6">
             <h1 className="text-xl font-medium">Planning Report</h1>
-            <p className="text-gray-600">Thursday, October 3rd, 2024</p>
+            <p className="text-gray-600">
+              {new Date().toLocaleDateString("en-US", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </p>
           </div>
 
           <div className="mb-8">
@@ -90,6 +83,7 @@ export default function SurgicalReport({
                     {departmentKey} Surgery Department
                   </h3>
 
+                  {/* Comparison Table */}
                   <div className="mb-6">
                     <h4 className="text-sm text-gray-600 mb-2">
                       Overall Performance Comparison Table (Before SurgiTwin vs.
@@ -114,30 +108,39 @@ export default function SurgicalReport({
                           <tr>
                             <td className="p-3 border-b">Case Volume</td>
                             <td className="p-3 border-b">
-                              {department.caseVolume}
+                              {formatNumber(department.caseVolume)}
                             </td>
                             <td className="p-3 border-b">
-                              {department.potentialCaseVolume}
+                              {formatNumber(department.potentialCaseVolume)}
                             </td>
-                            <td className="p-3 border-b">
+                            <td
+                              className="p-3 border-b"
+                              style={{ width: "170px" }}
+                            >
                               <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-magnet-faint text-magnet">
                                 <ArrowUpIcon className="w-3 h-3 mr-1" />+
-                                {department.potentialCaseVolume -
-                                  department.caseVolume}{" "}
+                                {formatNumber(
+                                  department.potentialCaseVolume -
+                                    department.caseVolume
+                                )}{" "}
                                 cases
                               </span>
                             </td>
                           </tr>
                           <tr>
                             <td className="p-3">Estimated Blocks Used</td>
-                            <td className="p-3">{department.blocks}</td>
                             <td className="p-3">
-                              {department.potentialBlocks}
+                              {formatNumber(department.blocks)}
+                            </td>
+                            <td className="p-3">
+                              {formatNumber(department.potentialBlocks)}
                             </td>
                             <td className="p-3">
                               <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-magnet-faint text-magnet">
                                 <ArrowDownIcon className="w-3 h-3 mr-1" />-
-                                {department.blocks - department.potentialBlocks}{" "}
+                                {formatNumber(
+                                  department.blocks - department.potentialBlocks
+                                )}{" "}
                                 blocks
                               </span>
                             </td>
@@ -147,6 +150,7 @@ export default function SurgicalReport({
                     </div>
                   </div>
 
+                  {/* Breakdown Table */}
                   <div className="mb-6">
                     <h4 className="text-sm text-gray-600 mb-2">
                       Breakdown of Efficiency Improvements Table
@@ -173,15 +177,18 @@ export default function SurgicalReport({
                                 {bucket.bucketName}
                               </td>
                               <td className="p-3 border-b">
-                                +{bucket.volumeIncreased} Cases
+                                +{formatNumber(bucket.volumeIncreased)} Cases
                               </td>
                               <td className="p-3 border-b">
-                                {bucket.blocksReduced} Blocks
+                                {formatNumber(bucket.blocksReduced)} Blocks
                               </td>
-                              <td className="p-3 border-b">
+                              <td
+                                className="p-3 border-b"
+                                style={{ width: "170px" }}
+                              >
                                 <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-magnet-faint text-magnet">
-                                  <ArrowUpIcon className="w-3 h-3 mr-1" />$
-                                  {bucket.costSaved.toLocaleString()} saved
+                                  <ArrowUpIcon className="w-3 h-3 mr-1" />
+                                  {formatCurrency(bucket.costSaved)} saved
                                 </span>
                               </td>
                             </tr>
@@ -191,10 +198,10 @@ export default function SurgicalReport({
                     </div>
                   </div>
 
-                  {/* Summary Stats */}
+                  {/* Summary */}
                   <div className="bg-gray-50 rounded-lg p-6">
-                    <div className="grid grid-cols-10 gap-4">
-                      <div className="col-span-4">
+                    <div className="grid grid-cols-10 gap-2">
+                      <div className="col-span-3">
                         <p className="text-sm text-emerald-700 font-medium mb-2">
                           Total {departmentKey} Surgery Department Performance
                           Impact
@@ -202,10 +209,12 @@ export default function SurgicalReport({
                       </div>
                       <div className="col-span-2 text-center">
                         <p className="text-4xl font-bold text-emerald-800">
-                          {department.potentialCaseVolume -
-                            department.caseVolume}
+                          {formatNumber(
+                            department.potentialCaseVolume -
+                              department.caseVolume
+                          )}
                         </p>
-                        <p className="text-xs text-emerald-700 text-center">
+                        <p className="text-xs text-emerald-700">
                           additional surgeries
                           <br />
                           performed
@@ -213,7 +222,9 @@ export default function SurgicalReport({
                       </div>
                       <div className="col-span-2 text-center">
                         <div className="text-4xl font-bold text-emerald-800">
-                          {department.blocks - department.potentialBlocks}
+                          {formatNumber(
+                            department.blocks - department.potentialBlocks
+                          )}
                         </div>
                         <p className="text-xs text-emerald-700">
                           freed-up
@@ -221,9 +232,9 @@ export default function SurgicalReport({
                           surgery blocks
                         </p>
                       </div>
-                      <div className="col-span-2 text-center">
+                      <div className="col-span-3 text-center">
                         <div className="text-4xl font-bold text-emerald-800">
-                          ${department.potentialCostSaved.toLocaleString()}
+                          {formatCurrency(department.potentialCostSaved)}
                         </div>
                         <p className="text-xs text-emerald-700">
                           in cost savings
@@ -240,33 +251,7 @@ export default function SurgicalReport({
         {/* Footer */}
         <footer className="bg-emerald-800 text-white p-4">
           <div className="max-w-6xl mx-auto flex justify-between items-center">
-            <div className="text-white">
-              <svg
-                width="80"
-                height="24"
-                viewBox="0 0 80 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M12 6C8.68629 6 6 8.68629 6 12C6 15.3137 8.68629 18 12 18C15.3137 18 18 15.3137 18 12C18 8.68629 15.3137 6 12 6ZM4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12C20 16.4183 16.4183 20 12 20C7.58172 20 4 16.4183 4 12Z"
-                  fill="white"
-                />
-                <path
-                  d="M32 8H28V16H30V13H32C34.2091 13 36 11.2091 36 9C36 6.79086 34.2091 5 32 5H28V7H32C33.1046 7 34 7.89543 34 9C34 10.1046 33.1046 11 32 11H30V8H32Z"
-                  fill="white"
-                />
-                <path d="M40 5H38V17H40V5Z" fill="white" />
-                <path
-                  d="M48 8H44V16H46V13H48C50.2091 13 52 11.2091 52 9C52 6.79086 50.2091 5 48 5H44V7H48C49.1046 7 50 7.89543 50 9C50 10.1046 49.1046 11 48 11H46V8H48Z"
-                  fill="white"
-                />
-                <path
-                  d="M58 5H56V17H58V12L62 17H64.5L60 11.5L64.5 5H62L58 10.5V5Z"
-                  fill="white"
-                />
-              </svg>
-            </div>
+            <div className="text-white font-semibold text-lg">©sifio</div>
             <div className="text-sm">www.sifiohealth.com</div>
           </div>
         </footer>
