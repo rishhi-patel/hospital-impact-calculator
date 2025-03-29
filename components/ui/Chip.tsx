@@ -9,7 +9,19 @@ const Chip: React.FC<ChipProps> = ({ value, helperText }) => {
   const isNegative = Number(value.replace(/[^0-9.-]+/g, "")) <= 0
 
   return (
-    <div className="inline-flex items-center gap-2 rounded-full bg-[#2C615017] px-4 py-2 shadow text-[#2C6150]">
+    <div
+      className="inline-flex items-center gap-2 rounded-full bg-[#2C615017] px-4 py-2 shadow text-[#2C6150]"
+      style={{
+        minWidth: "180px",
+        boxShadow: "0px 4px 4px 0px #2C615017",
+        fontWeight: 700,
+        fontSize: "14px",
+        lineHeight: "100%",
+        letterSpacing: "0%",
+        textAlign: "center",
+        verticalAlign: "middle",
+      }}
+    >
       {isNegative ? (
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -41,7 +53,9 @@ const Chip: React.FC<ChipProps> = ({ value, helperText }) => {
           />
         </svg>
       )}
-      <span className="text-lg font-bold">{value}</span>
+      <span className="text-lg font-bold">
+        {isNegative ? value : `+${value}`}
+      </span>
       {helperText && (
         <span className="text-base font-normal">{helperText}</span>
       )}

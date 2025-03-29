@@ -123,15 +123,11 @@ export default function SurgicalEstimator() {
         <SurgicalForm onCalculate={handleCalculate} />
         <AnimatePresence mode="wait">
           {showResults && (
-            <>
-              <PerformanceImpact data={performanceData} />{" "}
-              <DetailedReport departmentDetails={departmentDetails} />
-              {!showDetailedReport && (
-                <EmailVerification
-                  onVerificationSuccess={handleVerificationSuccess}
-                />
-              )}
-            </>
+            <PerformanceImpact
+              data={performanceData}
+              showDetailedReport={showDetailedReport}
+              onVerificationSuccess={handleVerificationSuccess}
+            />
           )}
         </AnimatePresence>
 

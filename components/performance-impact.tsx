@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { motion } from "framer-motion"
+import { EmailVerification } from "./email-verification"
 
 type PerformanceData = {
   totalBlocks: number
@@ -12,11 +13,17 @@ type PerformanceData = {
   currentCases?: number
 }
 
-type PerformanceImpactProps = {
+type PerformanceImpactProps = Readonly<{
   data: PerformanceData
-}
+  showDetailedReport: boolean
+  onVerificationSuccess: () => void
+}>
 
-export function PerformanceImpact({ data }: PerformanceImpactProps) {
+export function PerformanceImpact({
+  data,
+  showDetailedReport,
+  onVerificationSuccess,
+}: PerformanceImpactProps) {
   const formatNumber = (num: number) =>
     new Intl.NumberFormat("en-US").format(num)
 
@@ -123,6 +130,9 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
             isCurrency
           />
         </div>
+        {!showDetailedReport && (
+          <EmailVerification onVerificationSuccess={onVerificationSuccess} />
+        )}
       </Card>
     </motion.div>
   )
