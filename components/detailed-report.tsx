@@ -69,7 +69,7 @@ export function DetailedReport({ departmentDetails }: DetailedReportProps) {
           <h2 className="text-2xl font-bold text-gray-900">
             SurgiTwin™ Performance Insights for Surgical Departments
           </h2>
-          <p className="text-gray-600 mt-">
+          <p className="text-gray-600 mt-2">
             These improvements are driven by key factors such as Planning
             Accuracy, Flow Smoothing, and Priority Planning. See how each factor
             has impacted your department's efficiency based on your input.
