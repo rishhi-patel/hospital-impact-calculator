@@ -3,19 +3,27 @@
 import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { motion } from "framer-motion"
+import { EmailVerification } from "./email-verification"
 
 type PerformanceData = {
   totalBlocks: number
   potentialReduction: number
   projectedCases: number
   financialImpact: number
+  currentCases?: number
 }
 
-type PerformanceImpactProps = {
+type PerformanceImpactProps = Readonly<{
   data: PerformanceData
-}
+  showDetailedReport: boolean
+  onVerificationSuccess: () => void
+}>
 
-export function PerformanceImpact({ data }: PerformanceImpactProps) {
+export function PerformanceImpact({
+  data,
+  showDetailedReport,
+  onVerificationSuccess,
+}: PerformanceImpactProps) {
   const formatNumber = (num: number) =>
     new Intl.NumberFormat("en-US").format(num)
 
@@ -25,6 +33,52 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
       currency: "USD",
       maximumFractionDigits: 0,
     }).format(num)
+
+  const InfoBox = ({
+    value,
+    unit,
+    title,
+    subtitle,
+    isCurrency = false,
+  }: {
+    value: number
+    unit?: string
+    title: string
+    subtitle: string
+    isCurrency?: boolean
+  }) => (
+    <div
+      className="flex items-center p-4 rounded-lg border border-transparent"
+      style={{ borderBottom: "1px solid #B5CBBF38" }}
+    >
+      <div
+        className="flex items-center justify-center bg-[#2C615017] text-[#2C6150] px-4 py-4 rounded-lg mr-4 min-w-[25%]"
+        style={{
+          borderRadius: "22px",
+          boxShadow: "0px 4px 4px 0px #2C615017",
+        }}
+      >
+        <span className="text-3xl font-bold leading-tight">
+          {isCurrency ? formatCurrency(value) : formatNumber(value)}
+        </span>
+        {unit && <span className="text-sm ml-1">{unit}</span>}
+      </div>
+      <div>
+        <h3 className="font-semibold text-base text-gray-900">{title}</h3>
+        <p className="text-sm text-gray-600 mt-1">{subtitle}</p>
+      </div>
+    </div>
+  )
+
+  const projectedSubtitle = data.currentCases
+    ? `You could perform an additional ${formatNumber(
+        data.projectedCases - data.currentCases
+      )} cases per year, moving from ${formatNumber(
+        data.currentCases
+      )} to ${formatNumber(data.projectedCases)} cases.`
+    : `You could perform an additional ${formatNumber(
+        data.projectedCases
+      )} cases per year.`
 
   return (
     <motion.div
@@ -45,81 +99,40 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
         </div>
 
         <div className="space-y-4 mb-6">
-          {/* Total Surgical Blocks */}
-          <div className="flex items-center bg-gray-50 p-4 rounded-lg border border-transparent">
-            <div className="flex items-center justify-center bg-[#2C615017] text-[#2C6150] px-4 py-2 rounded-lg mr-4 min-w-[25%]">
-              <div className="font-bold text-2xl mr-[5px]">
-                {formatNumber(data.totalBlocks)}
-              </div>
-              <div className="text-sm"> blocks</div>
-            </div>
-            <div>
-              <div className="font-semibold">
-                Total Surgical Blocks Estimate
-              </div>
-              <div className="text-sm text-gray-600">
-                You have an estimated {formatNumber(data.totalBlocks)} blocks
-                based on your services
-              </div>
-            </div>
-          </div>
-
-          {/* Potential Block Reduction */}
-          <div className="flex items-center bg-gray-50 p-4 rounded-lg border border-transparent">
-            <div className="flex  items-center justify-center bg-[#2C615017] text-[#2C6150] px-4 py-2 rounded-lg mr-4  min-w-[25%]">
-              <div className="font-bold text-2xl mr-[5px]">
-                {formatNumber(data.potentialReduction)}
-                {"  "}
-              </div>
-              <div className="text-sm">blocks</div>
-            </div>
-            <div>
-              <div className="font-semibold">Potential Block Reduction</div>
-              <div className="text-sm text-gray-600">
-                By improving efficiency, you could reduce this total by{" "}
-                {formatNumber(data.potentialReduction)} blocks.
-              </div>
-            </div>
-          </div>
-
-          {/* Projected Case Volume Increase */}
-          <div className="flex items-center bg-gray-50 p-4 rounded-lg border border-transparent">
-            <div className="flex  items-center justify-center bg-[#2C615017] text-[#2C6150] px-4 py-2 rounded-lg mr-4  min-w-[25%]">
-              <div className="font-bold text-2xl mr-[5px]">
-                {formatNumber(data.projectedCases)}
-                {"  "}
-              </div>
-              <div className="text-sm">cases</div>
-            </div>
-            <div>
-              <div className="font-semibold">
-                Projected Case Volume Increase
-              </div>
-              <div className="text-sm text-gray-600">
-                You could perform an additional{" "}
-                {formatNumber(data.projectedCases)} cases per year.
-              </div>
-            </div>
-          </div>
-
-          {/* Financial Impact */}
-          <div className="flex items-center bg-gray-50 p-4 rounded-lg border border-transparent">
-            <div className="flex  items-center justify-center bg-[#2C615017] text-[#2C6150] px-4 py-2 rounded-lg mr-4  min-w-[25%]">
-              <div className="font-bold text-2xl">
-                {formatCurrency(data.financialImpact)}
-              </div>
-            </div>
-            <div>
-              <div className="font-semibold">
-                Financial Impact (Cost Savings or Revenue Increase)
-              </div>
-              <div className="text-sm text-gray-600">
-                With improved performance, your potential $ impact is{" "}
-                {formatCurrency(data.financialImpact)} per year.
-              </div>
-            </div>
-          </div>
+          <InfoBox
+            value={data.totalBlocks}
+            unit="blocks"
+            title="Total Surgical Blocks Estimate"
+            subtitle={`You have an estimated ${formatNumber(
+              data.totalBlocks
+            )} blocks based on your services`}
+          />
+          <InfoBox
+            value={data.potentialReduction}
+            unit="blocks"
+            title="Potential Block Reduction"
+            subtitle={`By improving efficiency, you could reduce this total by ${formatNumber(
+              data.potentialReduction
+            )} blocks.`}
+          />
+          <InfoBox
+            value={data.projectedCases - (data.currentCases ?? 0)}
+            unit="cases"
+            title="Projected Case Volume Increase"
+            subtitle={projectedSubtitle}
+          />
+          <InfoBox
+            value={data.financialImpact}
+            title="Financial Impact (Cost Savings or Revenue Increase)"
+            subtitle={`With improved performance, your potential $ impact is ${formatCurrency(
+              data.financialImpact
+            )} per year.`}
+            isCurrency
+          />
         </div>
+        {!showDetailedReport && (
+          <EmailVerification onVerificationSuccess={onVerificationSuccess} />
+        )}
       </Card>
     </motion.div>
   )
