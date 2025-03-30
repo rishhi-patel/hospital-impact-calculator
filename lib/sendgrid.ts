@@ -18,10 +18,10 @@ export async function sendOTPEmail(
     const { data, error } = await resend.emails.send({
       from: "hello@exocodelabs.tech", // ✅ FIX: Use your verified domain email
       to: email,
-      subject: "Your Verification Code - Surgical Performance Estimator",
+      subject: "Your Verification Code - Sifio Health",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
-          <h2 style="color: #2C6150; text-align: center;">Surgical Performance Estimator</h2>
+          <h2 style="color: #2C6150; text-align: center;">Sifio Health</h2>
           <p>Dear User,</p>
           <p>Thank you for using the Surgical Performance Estimator. To complete your verification, please use the following code:</p>
           <div style="background-color: #f4f7f7; padding: 20px; text-align: center; font-size: 24px; font-weight: bold; letter-spacing: 5px; margin: 20px 0;">
@@ -29,10 +29,10 @@ export async function sendOTPEmail(
           </div>
           <p>This code will expire in 10 minutes. If you did not request this code, please ignore this email or contact our support team.</p>
           <p>Best regards,</p>
-          <p>The Surgical Performance Estimator Team</p>
+          <p>Sifio Health Team</p>
           <hr style="border: none; border-top: 1px solid #e0e0e0; margin: 20px 0;">
           <p style="font-size: 12px; color: #888888; text-align: center;">
-            This email was sent to ${email}. If you have any questions, please contact us at support@yourdomain.com.
+            This email was sent to ${email}. If you have any questions, please contact us at info@sifiohealth.com.
           </p>
         </div>
       `,
