@@ -61,7 +61,6 @@ export function SurgicalForm({
     Q3: "Poor",
     Q2: "Average",
     Q1: "Good",
-    Best: "Best",
   }
 
   const toggleService = (serviceId: string) => {
