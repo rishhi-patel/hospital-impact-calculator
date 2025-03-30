@@ -16,7 +16,7 @@ export async function sendOTPEmail(
 ): Promise<boolean> {
   try {
     const { data, error } = await resend.emails.send({
-      from: "info@exocodelabs.tech", // ✅ FIX: Use your verified domain email
+      from: "noreply@exocodelabs.tech", // ✅ FIX: Use your verified domain email
       to: email,
       subject: "Your Verification Code - Sifio Health",
       html: `
