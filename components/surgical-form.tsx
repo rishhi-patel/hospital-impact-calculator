@@ -61,6 +61,7 @@ export function SurgicalForm({
     Q3: "Poor",
     Q2: "Average",
     Q1: "Good",
+    Best: "Best",
   }
 
   const toggleService = (serviceId: string) => {
@@ -324,11 +325,13 @@ export function SurgicalForm({
                   <SelectValue placeholder="Select current performance" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.entries(performanceLevels).map(([value, label]) => (
-                    <SelectItem key={value} value={value}>
-                      {label}
-                    </SelectItem>
-                  ))}
+                  {Object.entries(performanceLevels)
+                    .filter(([_, label]) => label !== "Best")
+                    .map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
               {formik.touched.currentPerformance &&
