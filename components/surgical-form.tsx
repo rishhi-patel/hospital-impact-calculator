@@ -48,13 +48,13 @@ export function SurgicalForm({
     { id: "ophthalmic", name: "Ophthalmic" },
     { id: "orthopaedic", name: "Orthopaedic" },
     {
-      id: "oral_and_maxillofacial_and_dentistry",
+      id: "Oral_and_Maxillofacial_and_Dentistry",
       name: "Oral and Maxillofacial and Dentistry",
     },
-    { id: "otolaryngic_ent", name: "Otolaryngic ENT" },
+    { id: "Otolaryngic_ENT", name: "Otolaryngic ENT" },
     { id: "urologic", name: "Urologic" },
     { id: "vascular", name: "Vascular" },
-    { id: "plastic_and_reconstructive", name: "Plastic and Reconstructive" },
+    { id: "Plastic_and_Reconstructive", name: "Plastic and Reconstructive" },
   ]
 
   const performanceLevels = {
@@ -129,12 +129,12 @@ export function SurgicalForm({
       const services: Service[] = selectedServices.map((id) => {
         const service = serviceCategories.find((s) => s.id === id)
         return {
-          serviceName: service?.name ?? id,
+          serviceName: id ?? service?.name,
           caseVolume: caseVolumes[id],
         }
       })
 
-      await onCalculate({
+      onCalculate({
         parameters: {
           hospitalType: values.departmentType,
           blockDuration: parseInt(values.blockDuration, 10),
