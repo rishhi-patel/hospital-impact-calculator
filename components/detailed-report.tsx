@@ -30,6 +30,19 @@ interface DepartmentDetail {
 type DetailedReportProps = {
   departmentDetails: Record<string, DepartmentDetail>
 }
+const serviceCategories = {
+  Cardiac: "Cardiac",
+  General: "General",
+  Gynaecologic: "Gynaecologic",
+  Neurosurgery: "Neurosurgery",
+  Ophthalmic: "Ophthalmic",
+  Orthopaedic: "Orthopaedic",
+  Oral_and_Maxillofacial_and_Dentistry: "Oral and Maxillofacial and Dentistry",
+  Otolaryngic_ENT: "Otolaryngic ENT",
+  Urologic: "Urologic",
+  Vascular: "Vascular",
+  Plastic_and_Reconstructive: "Plastic and Reconstructive",
+}
 
 export function DetailedReport({ departmentDetails }: DetailedReportProps) {
   const [openDepartments, setOpenDepartments] = useState<string[]>([])
@@ -81,6 +94,7 @@ export function DetailedReport({ departmentDetails }: DetailedReportProps) {
             const isOpen = openDepartments.includes(name)
             const caseDiff = dept.potentialCaseVolume - dept.caseVolume
             const blockDiff = dept.potentialBlocks - dept.blocks
+            const department = name as keyof typeof serviceCategories
 
             return (
               <div key={name} className="border rounded-lg overflow-hidden">
@@ -88,7 +102,9 @@ export function DetailedReport({ departmentDetails }: DetailedReportProps) {
                   className="flex justify-between items-center p-4 cursor-pointer bg-gray-50"
                   onClick={() => toggleDepartment(name)}
                 >
-                  <h3 className="font-medium">{name} Department</h3>
+                  <h3 className="font-medium">
+                    {serviceCategories[department]} Department
+                  </h3>
                   {isOpen ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                 </div>
 

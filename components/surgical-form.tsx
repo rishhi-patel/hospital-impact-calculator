@@ -41,19 +41,19 @@ export function SurgicalForm({
   const [loading, setLoading] = useState(false)
 
   const serviceCategories = [
-    { id: "cardiac", name: "Cardiac" },
-    { id: "general", name: "General" },
-    { id: "gynaecologic", name: "Gynaecologic" },
-    { id: "neurosurgery", name: "Neurosurgery" },
-    { id: "ophthalmic", name: "Ophthalmic" },
-    { id: "orthopaedic", name: "Orthopaedic" },
+    { id: "Cardiac", name: "Cardiac" },
+    { id: "General", name: "General" },
+    { id: "Gynaecologic", name: "Gynaecologic" },
+    { id: "Neurosurgery", name: "Neurosurgery" },
+    { id: "Ophthalmic", name: "Ophthalmic" },
+    { id: "Orthopaedic", name: "Orthopaedic" },
     {
       id: "Oral_and_Maxillofacial_and_Dentistry",
       name: "Oral and Maxillofacial and Dentistry",
     },
     { id: "Otolaryngic_ENT", name: "Otolaryngic ENT" },
-    { id: "urologic", name: "Urologic" },
-    { id: "vascular", name: "Vascular" },
+    { id: "Urologic", name: "Urologic" },
+    { id: "Vascular", name: "Vascular" },
     { id: "Plastic_and_Reconstructive", name: "Plastic and Reconstructive" },
   ]
 

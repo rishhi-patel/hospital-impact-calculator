@@ -32,6 +32,21 @@ export default function SurgicalReport({
       maximumFractionDigits: 0,
     }).format(num)
 
+  const serviceCategories = {
+    Cardiac: "Cardiac",
+    General: "General",
+    Gynaecologic: "Gynaecologic",
+    Neurosurgery: "Neurosurgery",
+    Ophthalmic: "Ophthalmic",
+    Orthopaedic: "Orthopaedic",
+    Oral_and_Maxillofacial_and_Dentistry:
+      "Oral and Maxillofacial and Dentistry",
+    Otolaryngic_ENT: "Otolaryngic ENT",
+    Urologic: "Urologic",
+    Vascular: "Vascular",
+    Plastic_and_Reconstructive: "Plastic and Reconstructive",
+  }
+
   return (
     <div
       style={{
@@ -84,11 +99,12 @@ export default function SurgicalReport({
 
             {/* Dynamic Department Cards */}
             {Object.keys(departmentDetails).map((departmentKey) => {
+              const key = departmentKey as keyof typeof serviceCategories
               const department = departmentDetails[departmentKey]
               return (
                 <div key={departmentKey} className="border rounded-lg p-6 mb-8">
                   <h3 className="font-medium mb-4">
-                    {departmentKey} Surgery Department
+                    {serviceCategories[key]} Surgery Department
                   </h3>
 
                   {/* Comparison Table */}
