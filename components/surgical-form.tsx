@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { encodePayload } from "@/lib/pdfUtils"
 
 interface Service {
   serviceName: string
@@ -134,15 +135,18 @@ export function SurgicalForm({
         }
       })
 
+      const parameters = {
+        hospitalType: values.departmentType,
+        blockDuration: parseInt(values.blockDuration, 10),
+        costRate: parseFloat(values.costRate),
+        quartileInit: values.currentPerformance,
+        quartileTarget: values.comparisonLevel,
+        services,
+      }
+
+      localStorage.setItem("encoded", encodePayload(parameters))
       onCalculate({
-        parameters: {
-          hospitalType: values.departmentType,
-          blockDuration: parseInt(values.blockDuration, 10),
-          costRate: parseFloat(values.costRate),
-          quartileInit: values.currentPerformance,
-          quartileTarget: values.comparisonLevel,
-          services,
-        },
+        parameters,
       })
 
       setLoading(false)
