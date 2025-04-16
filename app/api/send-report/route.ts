@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
     const pdfPageUrl = `${baseUrl}/pdf-render?data=${encoded}`
 
     const browser = await puppeteer.launch({
+      headless: true,
       args: chromium.args,
       defaultViewport: chromium.defaultViewport,
       executablePath:
