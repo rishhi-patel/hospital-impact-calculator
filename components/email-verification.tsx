@@ -74,15 +74,6 @@ export function EmailVerification() {
 
   const sendOTP = async () => {
     try {
-      await fetch("/api/send-report", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: formik.values.email,
-          encoded: localStorage.getItem("encoded"),
-        }),
-      })
-      return
       const response = await fetch("/api/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
