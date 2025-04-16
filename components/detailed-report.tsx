@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { ChevronDown, ChevronUp, Download } from "lucide-react"
 import { motion } from "framer-motion"
 import Chip from "./ui/Chip"
+import { downloadPDF } from "../lib/pdfUtils"
 
 const PDFGenerator = async (id: string) => {
   const { generatePDF } = await import("../lib/pdfUtils")
@@ -67,7 +68,8 @@ export function DetailedReport({ departmentDetails }: DetailedReportProps) {
 
   const handleDownload = () => {
     // Generate PDF from the element with the given ID
-    PDFGenerator("pdf-report")
+    downloadPDF(localStorage.getItem("encoded") || "")
+    // PDFGenerator("pdf-report")
   }
 
   return (
