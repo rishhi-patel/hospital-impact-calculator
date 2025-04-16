@@ -46,7 +46,7 @@ export function SurgicalForm({
     { id: "General", name: "General" },
     { id: "Gynaecologic", name: "Gynaecologic" },
     { id: "Neurosurgery", name: "Neurosurgery" },
-    { id: "Ophthalmic", name: "Ophthalmic" },
+    { id: "Ophthalmic", name: "Ophthalmology" },
     { id: "Orthopaedic", name: "Orthopaedic" },
     {
       id: "Oral_and_Maxillofacial_and_Dentistry",
@@ -59,10 +59,10 @@ export function SurgicalForm({
   ]
 
   const performanceLevels = {
-    Q3: "Poor",
-    Q2: "Average",
-    Q1: "Good",
-    Best: "Best",
+    Q3: "Poor (Bottom 25%)",
+    Q2: "Average (Top 50%)",
+    Q1: "Good (Top 25%)",
+    Best: "Best-in-Class (Top 5%)",
   }
 
   const toggleService = (serviceId: string) => {
@@ -285,7 +285,7 @@ export function SurgicalForm({
           {/* Cost Rate */}
           <div className="grid md:grid-cols-2 gap-6 items-start">
             <Label className="font-semibold">
-              What is your department’s estimated hourly cost/revenue rate?
+              What is your department’s estimated cost/revenue rate per minute?
             </Label>
             <div>
               <Select
@@ -298,9 +298,9 @@ export function SurgicalForm({
                   <SelectValue placeholder="Select cost rate" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="20">$20/hr</SelectItem>
-                  <SelectItem value="40">$40/hr</SelectItem>
-                  <SelectItem value="60">$60/hr</SelectItem>
+                  <SelectItem value="20">$20/min</SelectItem>
+                  <SelectItem value="40">$40/min</SelectItem>
+                  <SelectItem value="60">$60/min</SelectItem>
                 </SelectContent>
               </Select>
               {formik.touched.costRate && formik.errors.costRate && (

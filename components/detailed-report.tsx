@@ -36,7 +36,7 @@ const serviceCategories = {
   General: "General",
   Gynaecologic: "Gynaecologic",
   Neurosurgery: "Neurosurgery",
-  Ophthalmic: "Ophthalmic",
+  Ophthalmic: "Ophthalmology",
   Orthopaedic: "Orthopaedic",
   Oral_and_Maxillofacial_and_Dentistry: "Oral and Maxillofacial and Dentistry",
   Otolaryngic_ENT: "Otolaryngic ENT",
