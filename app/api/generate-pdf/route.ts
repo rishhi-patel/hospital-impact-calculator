@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
-import puppeteer from "puppeteer"
+import puppeteer from "puppeteer-core" // Use puppeteer-core
+import chrome from "chrome-aws-lambda" // Use chrome-aws-lambda
 
 export async function POST(req: NextRequest) {
   try {
@@ -8,16 +9,19 @@ export async function POST(req: NextRequest) {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
     const pdfPageUrl = `${baseUrl}/pdf-render?data=${encoded}`
 
+    // Launch the browser using chrome-aws-lambda
     const browser = await puppeteer.launch({
       headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      executablePath: await chrome.executablePath, // Use the executable path from chrome-aws-lambda
+      args: chrome.args, // Use chrome-aws-lambda arguments
+      defaultViewport: chrome.defaultViewport, // Default viewport size for Puppeteer
     })
 
     const page = await browser.newPage()
     await page.goto(pdfPageUrl, { waitUntil: "networkidle0" })
 
     const pdfBuffer = await page.pdf({
-      format: "A4",
+      format: "a4",
       printBackground: true,
     })
 
