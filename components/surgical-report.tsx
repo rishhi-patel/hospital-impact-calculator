@@ -1,4 +1,5 @@
 import { ArrowUpIcon, ArrowDownIcon } from "lucide-react"
+import "@/components/ui/styles/pdf-print.css" // adjust the path based on your structure
 
 interface DepartmentDetail {
   serviceName: string
@@ -48,238 +49,230 @@ export default function SurgicalReport({
   }
 
   return (
-    <div
-      style={{
-        visibility: "hidden", // Make it invisible but still part of the layout
-        position: "absolute", // Remove it from the flow but still in the DOM
-        width: "0",
-        height: "0",
-        display: "none",
-      }}
-    >
-      <div
-        className="flex flex-col min-h-screen bg-white"
-        id="pdf-report"
-        style={{ margin: 0, padding: 0 }}
-      >
-        {/* Header */}
-        <header className="bg-emerald-800 text-white p-4">
-          <div className="max-w-6xl mx-auto">
-            <div className="text-right">
-              <span className="font-semibold">surgi</span>
-              <span className="font-light">twin</span>
-            </div>
+    <div className="min-h-screen bg-white text-black">
+      {/* Header */}
+      <header className="bg-magnet text-white p-4">
+        <div className="max-w-6xl mx-auto flex justify-between">
+          <div></div>
+          <div className="text-right text-lg font-semibold">
+            <span className="font-bold">surgi</span>
+            <span className="font-light">twin</span>
           </div>
-        </header>
+        </div>
+      </header>
 
-        {/* Main Content */}
-        <main className="flex-1 max-w-6xl mx-auto w-full p-6">
-          <div className="flex justify-between items-center border-b pb-4 mb-6">
-            <h1 className="text-xl font-medium">Planning Report</h1>
-            <p className="text-gray-600">
-              {new Date().toLocaleDateString("en-US", {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </p>
-          </div>
+      {/* Main Content */}
+      <main className="max-w-6xl mx-auto w-full px-6 py-8">
+        <div className="text-xl font-medium mb-4">Planning Report</div>
+        <div className="text-right text-gray-500 text-sm mb-6">
+          {new Date().toLocaleDateString("en-US", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </div>
 
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold mb-2">
-              SurgiTwin™ Performance Insights for Surgical Departments
-            </h2>
-            <p className="text-center text-gray-700 max-w-3xl mx-auto mb-8">
-              These improvements are driven by key factors such as Planning
-              Accuracy, Flow Smoothing, and Priority Planning. See how each
-              factor has impacted your department's efficiency based on your
-              input.
-            </p>
+        <h2 className="text-center text-3xl font-bold mb-2">
+          Surgi<span className="font-light">Twin™</span> Performance Insights
+          for Surgical Departments
+        </h2>
+        <p className="text-center text-gray-600 max-w-3xl mx-auto mb-10">
+          These improvements are driven by key factors such as Planning
+          Accuracy, Flow Smoothing, and Priority Planning. See how each factor
+          has impacted your department's efficiency based on your input.
+        </p>
 
-            {/* Dynamic Department Cards */}
-            {Object.keys(departmentDetails).map((departmentKey) => {
-              const key = departmentKey as keyof typeof serviceCategories
-              const department = departmentDetails[departmentKey]
-              return (
-                <div key={departmentKey} className="border rounded-lg p-6 mb-8">
-                  <h3 className="font-medium mb-4">
-                    {serviceCategories[key]} Surgery Department
-                  </h3>
+        {/* Department Cards */}
+        {Object.keys(departmentDetails).map((departmentKey) => {
+          const key = departmentKey as keyof typeof serviceCategories
+          const department = departmentDetails[departmentKey]
 
-                  {/* Comparison Table */}
-                  <div className="mb-6">
-                    <h4 className="text-sm text-gray-600 mb-2">
-                      Overall Performance Comparison Table (Before SurgiTwin vs.
-                      After SurgiTwin)
-                    </h4>
+          const totalSurgeries =
+            department.potentialCaseVolume - department.caseVolume
+          const totalBlocks = department.blocks - department.potentialBlocks
+          const totalCost = department.potentialCostSaved
 
-                    <div className="border rounded-lg overflow-hidden">
-                      <table className="w-full">
-                        <thead>
-                          <tr className="bg-gray-50">
-                            <th className="text-left p-3 border-b">Metric</th>
-                            <th className="text-left p-3 border-b">
-                              Current Performance
-                            </th>
-                            <th className="text-left p-3 border-b">
-                              Optimized Performance
-                            </th>
-                            <th className="text-left p-3 border-b"></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <td className="p-3 border-b">Case Volume</td>
-                            <td className="p-3 border-b">
-                              {formatNumber(department.caseVolume)}
-                            </td>
-                            <td className="p-3 border-b">
-                              {formatNumber(department.potentialCaseVolume)}
-                            </td>
-                            <td
-                              className="p-3 border-b"
-                              style={{ width: "170px" }}
-                            >
-                              <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-magnet-faint text-magnet">
-                                <ArrowUpIcon className="w-3 h-3 mr-1" />+
-                                {formatNumber(
-                                  department.potentialCaseVolume -
-                                    department.caseVolume
-                                )}{" "}
-                                cases
-                              </span>
-                            </td>
-                          </tr>
-                          <tr>
-                            <td className="p-3">Estimated Blocks Used</td>
-                            <td className="p-3">
-                              {formatNumber(department.blocks)}
-                            </td>
-                            <td className="p-3">
-                              {formatNumber(department.potentialBlocks)}
-                            </td>
-                            <td className="p-3">
-                              <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-magnet-faint text-magnet">
-                                <ArrowDownIcon className="w-3 h-3 mr-1" />-
-                                {formatNumber(
-                                  department.blocks - department.potentialBlocks
-                                )}{" "}
-                                blocks
-                              </span>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+          return (
+            <div
+              key={departmentKey}
+              className="bg-white border rounded-xl p-6 mb-12 shadow-sm"
+            >
+              <h3 className="text-lg font-semibold mb-4">
+                {serviceCategories[key]} Surgery Department
+              </h3>
+
+              {/* Overall Table */}
+              <p className="text-sm text-gray-600 mb-2">
+                Overall Performance Comparison Table (Before SurgiTwin vs. After
+                SurgiTwin)
+              </p>
+              <table className="w-full mb-6 border rounded-md overflow-hidden text-sm">
+                <thead className="bg-gray-50 text-left">
+                  <tr>
+                    <th className="p-3 border-b">Metric</th>
+                    <th className="p-3 border-b">Current Performance</th>
+                    <th className="p-3 border-b">Optimized Performance</th>
+                    <th className="p-3 border-b"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="p-3 border-b">Case Volume</td>
+                    <td className="p-3 border-b">
+                      {formatNumber(department.caseVolume)}
+                    </td>
+                    <td className="p-3 border-b">
+                      {formatNumber(department.potentialCaseVolume)}
+                    </td>
+                    <td className="p-3 border-b">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-magnet-faint text-magnet">
+                        <ArrowUpIcon className="w-3 h-3 mr-1" />+
+                        {formatNumber(totalSurgeries)} cases
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="p-3">Estimated Blocks Used</td>
+                    <td className="p-3">{formatNumber(department.blocks)}</td>
+                    <td className="p-3">
+                      {formatNumber(department.potentialBlocks)}
+                    </td>
+                    <td className="p-3">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-magnet-faint text-magnet">
+                        <ArrowDownIcon className="w-3 h-3 mr-1" />-
+                        {formatNumber(totalBlocks)} blocks
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+              {/* Breakdown Table */}
+              <p className="text-sm text-gray-600 mb-2">
+                Breakdown of Efficiency Improvements Table
+              </p>
+              <table className="w-full mb-6 border rounded-md overflow-hidden text-sm">
+                <thead className="bg-gray-50 text-left">
+                  <tr>
+                    <th className="p-3 border-b">Category</th>
+                    <th className="p-3 border-b">
+                      Additional Surgeries Performed
+                    </th>
+                    <th className="p-3 border-b">Freed-Up Blocks</th>
+                    <th className="p-3 border-b"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {department.potentialByBucket.map((bucket) => (
+                    <tr key={bucket.bucketName}>
+                      <td className="p-3 border-b">{bucket.bucketName}</td>
+                      <td className="p-3 border-b">
+                        +{formatNumber(bucket.volumeIncreased)} Cases
+                      </td>
+                      <td className="p-3 border-b">
+                        {formatNumber(bucket.blocksReduced)} Blocks
+                      </td>
+                      <td className="p-3 border-b">
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-magnet-faint text-magnet">
+                          <ArrowUpIcon className="w-3 h-3 mr-1" />
+                          {formatCurrency(bucket.costSaved)} saved
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              {/* Summary Section */}
+              {/* Summary Section */}
+              <div className="bg-magnet-faint rounded-xl px-6 py-6 shadow-sm flex items-center justify-between text-magnet mt-4">
+                <div className="text-sm font-semibold">
+                  Total {serviceCategories[key]} Surgery Performance Impact
+                </div>
+
+                <div className="flex gap-12 text-center">
+                  <div>
+                    <div className="text-3xl font-bold">
+                      {formatNumber(totalSurgeries)}
+                    </div>
+                    <div className="text-xs mt-1 leading-tight">
+                      additional surgeries
+                      <br />
+                      performed
                     </div>
                   </div>
-
-                  {/* Breakdown Table */}
-                  <div className="mb-6">
-                    <h4 className="text-sm text-gray-600 mb-2">
-                      Breakdown of Efficiency Improvements Table
-                    </h4>
-
-                    <div className="border rounded-lg overflow-hidden">
-                      <table className="w-full">
-                        <thead>
-                          <tr className="bg-gray-50">
-                            <th className="text-left p-3 border-b">Category</th>
-                            <th className="text-left p-3 border-b">
-                              Additional Surgeries Performed
-                            </th>
-                            <th className="text-left p-3 border-b">
-                              Freed-Up Blocks
-                            </th>
-                            <th className="text-left p-3 border-b"></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {department.potentialByBucket.map((bucket) => (
-                            <tr key={bucket.bucketName}>
-                              <td className="p-3 border-b">
-                                {bucket.bucketName}
-                              </td>
-                              <td className="p-3 border-b">
-                                +{formatNumber(bucket.volumeIncreased)} Cases
-                              </td>
-                              <td className="p-3 border-b">
-                                {formatNumber(bucket.blocksReduced)} Blocks
-                              </td>
-                              <td
-                                className="p-3 border-b"
-                                style={{ width: "170px" }}
-                              >
-                                <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-magnet-faint text-magnet">
-                                  <ArrowUpIcon className="w-3 h-3 mr-1" />
-                                  {formatCurrency(bucket.costSaved)} saved
-                                </span>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
+                  <div>
+                    <div className="text-3xl font-bold">
+                      {formatNumber(totalBlocks)}
+                    </div>
+                    <div className="text-xs mt-1 leading-tight">
+                      freed-up
+                      <br />
+                      surgery blocks
                     </div>
                   </div>
-
-                  {/* Summary */}
-                  <div className="bg-gray-50 rounded-lg p-6">
-                    <div className="grid grid-cols-10 gap-2">
-                      <div className="col-span-3">
-                        <p className="text-sm text-emerald-700 font-medium mb-2">
-                          Total {departmentKey} Surgery Department Performance
-                          Impact
-                        </p>
-                      </div>
-                      <div className="col-span-2 text-center">
-                        <p className="text-4xl font-bold text-emerald-800">
-                          {formatNumber(
-                            department.potentialCaseVolume -
-                              department.caseVolume
-                          )}
-                        </p>
-                        <p className="text-xs text-emerald-700">
-                          additional surgeries
-                          <br />
-                          performed
-                        </p>
-                      </div>
-                      <div className="col-span-2 text-center">
-                        <div className="text-4xl font-bold text-emerald-800">
-                          {formatNumber(
-                            department.blocks - department.potentialBlocks
-                          )}
-                        </div>
-                        <p className="text-xs text-emerald-700">
-                          freed-up
-                          <br />
-                          surgery blocks
-                        </p>
-                      </div>
-                      <div className="col-span-3 text-center">
-                        <div className="text-4xl font-bold text-emerald-800">
-                          {formatCurrency(department.potentialCostSaved)}
-                        </div>
-                        <p className="text-xs text-emerald-700">
-                          in cost savings
-                        </p>
-                      </div>
+                  <div>
+                    <div className="text-3xl font-bold">
+                      {formatCurrency(totalCost)}
+                    </div>
+                    <div className="text-xs mt-1 leading-tight">
+                      in cost savings
                     </div>
                   </div>
                 </div>
-              )
-            })}
-          </div>
-        </main>
+              </div>
+            </div>
+          )
+        })}
+        {/* Key Definitions */}
+        <section className="max-w-6xl mx-auto w-full px-6 py-10">
+          <h4 className="text-lg font-semibold text-magnet mb-6">
+            Key Definitions
+          </h4>
 
-        {/* Footer */}
-        <footer className="bg-emerald-800 text-white p-4">
-          <div className="max-w-6xl mx-auto flex justify-between items-center">
-            <div className="text-white font-semibold text-lg">©sifio</div>
-            <div className="text-sm">www.sifiohealth.com</div>
+          <div className="grid gap-4 text-sm">
+            <div className="flex">
+              <span className="w-48 text-magnet font-semibold">
+                Planning Accuracy
+              </span>
+              <span>
+                SurgiTwin™ improves planning accuracy by aligning estimated case
+                durations with actual times, reducing over- and
+                under-scheduling.
+              </span>
+            </div>
+
+            <div className="flex">
+              <span className="w-48 text-magnet font-semibold">
+                Flow Smoothing
+              </span>
+              <span>
+                SurgiTwin™ minimizes disruptions like same-day cancellations and
+                delays to ensure a smoother, more reliable surgical schedule.
+              </span>
+            </div>
+
+            <div className="flex">
+              <span className="w-48 text-magnet font-semibold">
+                Priority Planning
+              </span>
+              <span>
+                SurgiTwin™ optimizes case start times and turnaround times to
+                help departments fit more surgeries into available OR blocks.
+              </span>
+            </div>
           </div>
-        </footer>
-      </div>
+        </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-magnet text-white p-4">
+        <div className="max-w-6xl mx-auto flex justify-between items-center text-sm">
+          <div className="font-semibold text-base">©sifio</div>
+          <div>www.sifiohealth.com</div>
+        </div>
+      </footer>
     </div>
   )
 }
