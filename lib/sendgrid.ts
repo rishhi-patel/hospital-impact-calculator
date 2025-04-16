@@ -66,16 +66,21 @@ export async function sendDetailedReportEmail(
   try {
     const base64 = buffer.toString("base64")
 
+    const htmlBody = getEmailHTML(
+      "Sifio Health",
+      `
+      <p>Dear User,</p>
+      <p>Thank you for using the Surgical Performance Estimator. Please find your detailed report attached to this email.</p>
+      <p>If you have any questions or need further assistance, feel free to contact us at <a href="mailto:info@sifiohealth.com" style="color: #2C6150; text-decoration: none;">info@sifiohealth.com</a>.</p>
+      `,
+      `This email was sent to ${email}. For queries, contact info@sifiohealth.com.`
+    )
+
     const { error } = await resend.emails.send({
       from: "noreply@sifiohealth.com",
       to: email,
       subject: "Your Detailed Report - Sifio Health",
-      html: `
-        <div style="font-family: Arial, sans-serif;">
-          <h2 style="text-align:center; color:#2C6150;">Sifio Health</h2>
-          <p>Your report is attached.</p>
-        </div>
-      `,
+      html: htmlBody,
       attachments: [
         {
           content: base64,
