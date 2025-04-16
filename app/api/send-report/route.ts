@@ -2,8 +2,7 @@
 
 import { sendDetailedReportEmail } from "@/lib/sendgrid"
 import { NextRequest, NextResponse } from "next/server"
-import puppeteer from "puppeteer-core" // Use puppeteer-core
-import chrome from "chrome-aws-lambda" // Use chrome-aws-lambda
+import puppeteer from "puppeteer"
 
 export async function POST(req: NextRequest) {
   try {
@@ -21,16 +20,14 @@ export async function POST(req: NextRequest) {
 
     const browser = await puppeteer.launch({
       headless: true,
-      executablePath: await chrome.executablePath, // Use the executable path from chrome-aws-lambda
-      args: chrome.args, // Use chrome-aws-lambda arguments
-      defaultViewport: chrome.defaultViewport, // Default viewport size for Puppeteer
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
     })
 
     const page = await browser.newPage()
     await page.goto(pdfPageUrl, { waitUntil: "networkidle0" })
 
     const pdfBuffer = await page.pdf({
-      format: "a4",
+      format: "A4",
       printBackground: true,
     })
 
