@@ -9,16 +9,13 @@ import { Label } from "@/components/ui/label"
 import { motion } from "framer-motion"
 import { useToast } from "@/hooks/use-toast"
 
-type EmailVerificationProps = {
-  onVerificationSuccess: () => void
-}
+type EmailVerificationProps = {}
 
-export function EmailVerification({
-  onVerificationSuccess,
-}: EmailVerificationProps) {
+export function EmailVerification({}: EmailVerificationProps) {
   const [email, setEmail] = useState("")
   const [otp, setOtp] = useState(["", "", "", "", "", ""])
   const [isOtpVisible, setIsOtpVisible] = useState(false)
+  const [isVerified, setIsVerified] = useState(false)
   const { toast } = useToast()
 
   useEffect(() => {
@@ -131,10 +128,19 @@ export function EmailVerification({
         description: "Your email has been verified successfully.",
       })
 
-      //call the HubSpot API to create or update the contact
+      setIsVerified(true)
+
+      // Call HubSpot
       await handleHubSpotContact(email)
 
-      onVerificationSuccess()
+      await fetch("/api/send-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          encoded: localStorage.getItem("encoded"),
+        }),
+      })
     } catch (error) {
       console.error("Error verifying OTP:", error)
       toast({
@@ -150,7 +156,6 @@ export function EmailVerification({
 
   const handleHubSpotContact = async (email: string): Promise<void> => {
     try {
-      // Create or update contact in HubSpot
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -193,88 +198,101 @@ export function EmailVerification({
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <Card className="p-6 shadow-sm border rounded-lg">
-        <div className="mb-6">
-          <p className="text-center">
-            These improvements come from key factors such as{" "}
-            <span className="font-medium text-primary">
-              Planning Accuracy, Flow Smoothing,
-            </span>{" "}
-            and{" "}
-            <span className="font-medium text-primary">Priority Planning</span>.
-            To see how each factor impacts your hospital's efficiency, enter
-            your email below.
+      {isVerified ? (
+        <Card className="p-6 shadow-sm border rounded-lg text-center">
+          <p className="text-xl font-semibold text-primary mb-2">
+            Thank you for verifying your email!
           </p>
-        </div>
-
-        <div className="space-y-4 max-w-md mx-auto">
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="bg-blue-50"
-            />
+          <p className="text-gray-700">
+            Your report will be shared with you soon.
+          </p>
+        </Card>
+      ) : (
+        <Card className="p-6 shadow-sm border rounded-lg">
+          <div className="mb-6">
+            <p className="text-center">
+              These improvements come from key factors such as{" "}
+              <span className="font-medium text-primary">
+                Planning Accuracy, Flow Smoothing,
+              </span>{" "}
+              and{" "}
+              <span className="font-medium text-primary">
+                Priority Planning
+              </span>
+              . To see how each factor impacts your hospital's efficiency, enter
+              your email below.
+            </p>
           </div>
 
-          {!isOtpVisible && (
-            <div className="flex justify-center mt-6">
-              <Button
-                onClick={sendOTP}
-                className="bg-primary hover:bg-primary/90 text-white"
-              >
-                Verify Email
-              </Button>
+          <div className="space-y-4 max-w-md mx-auto">
+            <div>
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="bg-blue-50"
+              />
             </div>
-          )}
 
-          {isOtpVisible && (
-            <>
-              <div>
-                <Label>Enter verification code sent to your email</Label>
-                <div className="flex justify-center gap-2 mt-2">
-                  {otp.map((digit, index) => (
-                    <Input
-                      key={index}
-                      id={`otp-${index}`}
-                      type="text"
-                      inputMode="numeric"
-                      maxLength={1}
-                      value={digit}
-                      onChange={(e) => handleChange(index, e.target.value)}
-                      onKeyDown={(e) => handleKeyDown(index, e)}
-                      onPaste={handlePaste}
-                      className="w-12 h-12 text-center text-lg"
-                      autoFocus={index === 0}
-                    />
-                  ))}
-                </div>
-              </div>
-
-              <div className="flex justify-center mt-4">
-                <Button
-                  variant="outline"
-                  onClick={handleResendCode}
-                  className="border-primary text-primary hover:bg-primary hover:text-white"
-                >
-                  Resend Code
-                </Button>
-              </div>
-
+            {!isOtpVisible && (
               <div className="flex justify-center mt-6">
                 <Button
-                  onClick={verifyOTP}
+                  onClick={sendOTP}
                   className="bg-primary hover:bg-primary/90 text-white"
                 >
-                  Verify OTP
+                  Verify Email
                 </Button>
               </div>
-            </>
-          )}
-        </div>
-      </Card>
+            )}
+
+            {isOtpVisible && (
+              <>
+                <div>
+                  <Label>Enter verification code sent to your email</Label>
+                  <div className="flex justify-center gap-2 mt-2">
+                    {otp.map((digit, index) => (
+                      <Input
+                        key={index}
+                        id={`otp-${index}`}
+                        type="text"
+                        inputMode="numeric"
+                        maxLength={1}
+                        value={digit}
+                        onChange={(e) => handleChange(index, e.target.value)}
+                        onKeyDown={(e) => handleKeyDown(index, e)}
+                        onPaste={handlePaste}
+                        className="w-12 h-12 text-center text-lg"
+                        autoFocus={index === 0}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex justify-center mt-4">
+                  <Button
+                    variant="outline"
+                    onClick={handleResendCode}
+                    className="border-primary text-primary hover:bg-primary hover:text-white"
+                  >
+                    Resend Code
+                  </Button>
+                </div>
+
+                <div className="flex justify-center mt-6">
+                  <Button
+                    onClick={verifyOTP}
+                    className="bg-primary hover:bg-primary/90 text-white"
+                  >
+                    Verify OTP
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
+        </Card>
+      )}
     </motion.div>
   )
 }

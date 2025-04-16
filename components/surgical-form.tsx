@@ -145,10 +145,9 @@ export function SurgicalForm({
       }
 
       localStorage.setItem("encoded", encodePayload(parameters))
-      onCalculate({
+      await onCalculate({
         parameters,
       })
-
       setLoading(false)
     },
   })

@@ -15,15 +15,9 @@ type PerformanceData = {
 
 type PerformanceImpactProps = Readonly<{
   data: PerformanceData
-  showDetailedReport: boolean
-  onVerificationSuccess: () => void
 }>
 
-export function PerformanceImpact({
-  data,
-  showDetailedReport,
-  onVerificationSuccess,
-}: PerformanceImpactProps) {
+export function PerformanceImpact({ data }: PerformanceImpactProps) {
   const formatNumber = (num: number) =>
     new Intl.NumberFormat("en-US").format(num)
 
@@ -130,9 +124,8 @@ export function PerformanceImpact({
             isCurrency
           />
         </div>
-        {!showDetailedReport && (
-          <EmailVerification onVerificationSuccess={onVerificationSuccess} />
-        )}
+
+        <EmailVerification />
       </Card>
     </motion.div>
   )
