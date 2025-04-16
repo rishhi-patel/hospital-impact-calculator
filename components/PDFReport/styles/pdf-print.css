@@ -1,4 +1,8 @@
 @media print {
+  main {
+    margin-top: 120px; /* equal to or slightly more than header height */
+    margin-bottom: 100px; /* equal to or slightly more than footer height */
+  }
   body {
     margin: 0;
   }

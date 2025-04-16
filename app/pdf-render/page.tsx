@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
-import SurgicalReport from "@/components/surgical-report"
+import SurgicalReport from "@/components/PDFReport/surgical-report"
 import { decodePayload } from "@/lib/pdfUtils"
 
 export default function PDFRenderPage() {
