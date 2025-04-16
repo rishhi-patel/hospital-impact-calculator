@@ -3,14 +3,13 @@
 import { useState } from "react"
 import { SurgicalForm } from "@/components/surgical-form"
 import { PerformanceImpact } from "@/components/performance-impact"
-import { DetailedReport } from "@/components/detailed-report"
+// import { DetailedReport } from "@/components/detailed-report"
 import { AnimatePresence } from "framer-motion"
 import { useToast } from "@/hooks/use-toast"
 
 export default function SurgicalEstimator() {
   const { toast } = useToast()
   const [showResults, setShowResults] = useState(false)
-  const [showDetailedReport, setShowDetailedReport] = useState(false)
   const [performanceData, setPerformanceData] = useState({
     totalBlocks: 0,
     potentialReduction: 0,
@@ -90,7 +89,6 @@ export default function SurgicalEstimator() {
 
       setDepartmentDetails(apiData)
       setShowResults(true)
-      setShowDetailedReport(false)
     } catch (error) {
       console.error("Error calling API:", error)
       toast({
@@ -99,10 +97,6 @@ export default function SurgicalEstimator() {
         variant: "destructive",
       })
     }
-  }
-
-  const handleVerificationSuccess = () => {
-    setShowDetailedReport(true)
   }
 
   return (
@@ -120,20 +114,14 @@ export default function SurgicalEstimator() {
       <div className="space-y-8">
         <SurgicalForm onCalculate={handleCalculate} />
         <AnimatePresence mode="wait">
-          {showResults && (
-            <PerformanceImpact
-              data={performanceData}
-              showDetailedReport={showDetailedReport}
-              onVerificationSuccess={handleVerificationSuccess}
-            />
-          )}
+          {showResults && <PerformanceImpact data={performanceData} />}
         </AnimatePresence>
 
-        <AnimatePresence mode="wait">
+        {/* <AnimatePresence mode="wait">
           {showDetailedReport && (
             <DetailedReport departmentDetails={departmentDetails} />
           )}
-        </AnimatePresence>
+        </AnimatePresence> */}
       </div>
     </div>
   )

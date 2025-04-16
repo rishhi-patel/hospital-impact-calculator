@@ -226,7 +226,7 @@ export default function SurgicalReport({
         })}
 
         {/* Key Definitions */}
-        <section className="max-w-6xl mx-auto w-full px-6">
+        <section className="max-w-6xl mx-auto w-full px-6 pt-24">
           <h4 className="text-lg font-semibold text-magnet mb-6">
             Key Definitions
           </h4>
