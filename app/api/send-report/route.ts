@@ -1,5 +1,3 @@
-// /app/api/send-report/route.ts
-
 import { sendDetailedReportEmail } from "@/lib/sendgrid"
 import { NextRequest, NextResponse } from "next/server"
 import puppeteer from "puppeteer"
@@ -18,9 +16,15 @@ export async function POST(req: NextRequest) {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
     const pdfPageUrl = `${baseUrl}/pdf-render?data=${encoded}`
 
+    // Check for the environment variable set by Netlify for the executable path
+    const executablePath =
+      process.env.PUPPETEER_EXECUTABLE_PATH ||
+      puppeteer.executablePath()
+
     const browser = await puppeteer.launch({
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
+      executablePath, // Use the executable path provided by the environment variable
     })
 
     const page = await browser.newPage()
