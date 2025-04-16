@@ -4,10 +4,8 @@ import { useState } from "react"
 import { SurgicalForm } from "@/components/surgical-form"
 import { PerformanceImpact } from "@/components/performance-impact"
 import { DetailedReport } from "@/components/detailed-report"
-import { EmailVerification } from "@/components/email-verification"
 import { AnimatePresence } from "framer-motion"
 import { useToast } from "@/hooks/use-toast"
-import SurgicalReport from "./surgical-report"
 
 export default function SurgicalEstimator() {
   const { toast } = useToast()
@@ -136,7 +134,6 @@ export default function SurgicalEstimator() {
             <DetailedReport departmentDetails={departmentDetails} />
           )}
         </AnimatePresence>
-        <SurgicalReport departmentDetails={departmentDetails} />
       </div>
     </div>
   )
