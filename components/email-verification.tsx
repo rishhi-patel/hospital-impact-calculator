@@ -133,14 +133,14 @@ export function EmailVerification() {
         }),
       })
 
-      // await fetch("/api/send-report", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({
-      //     email: formik.values.email,
-      //     encoded: localStorage.getItem("encoded"),
-      //   }),
-      // })
+      await fetch("/api/send-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formik.values.email,
+          encoded: localStorage.getItem("encoded"),
+        }),
+      })
     } catch (error) {
       toast({
         title: "Error",
