@@ -1,5 +1,5 @@
 [build]
-  command = "npm install --legacy-peer-deps && npm run build"
+  command = "yarn install --legacy-peer-deps && yarn build"  # Use yarn consistently
   publish = ".next"
 
 [build.environment]
@@ -11,7 +11,7 @@
 
 [[plugins]]
   package = "netlify-plugin-chromium"
-  inputs:
-      packageManager: yarn
-      setChromePathInEnv: false
-      failBuildOnError: true
+  [plugins.inputs]  # Correct way to define inputs
+  packageManager = "yarn"  # Ensure this matches your setup (npm or yarn)
+  setChromePathInEnv = true  # Set Chrome path automatically in the environment
+  failBuildOnError = true
