@@ -33,7 +33,8 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const { email } = await req.json()
+  const { email, firstName, lastName, organizationName, encoded, source } =
+    await req.json()
 
   if (!email) {
     return NextResponse.json(
@@ -43,7 +44,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // Check if the contact exists in HubSpot using email (searching by email)
+    // Check if the contact exists in HubSpot using email
     const searchResponse = await fetch(
       `https://api.hubapi.com/contacts/v1/search/query?q=${email}`,
       {
@@ -65,8 +66,21 @@ export async function POST(req: NextRequest) {
     const searchData = await searchResponse.json()
     let contactId = null
 
+    const properties = [
+      { property: "email", value: email },
+      { property: "firstname", value: firstName },
+      { property: "lastname", value: lastName },
+      { property: "company", value: organizationName },
+      { property: "contact_source", value: source },
+      { property: "report_status", value: "Pending" },
+      {
+        property: "report_preview_link",
+        value: `${process.env.NEXT_PUBLIC_APP_URL}/pdf-render?data=${encoded}`,
+      },
+    ]
+
     if (searchData.total > 0) {
-      // If contact exists, update the contact (just updating name as an example)
+      // Update existing contact
       contactId = searchData.contacts[0].vid
 
       const updateResponse = await fetch(
@@ -77,14 +91,7 @@ export async function POST(req: NextRequest) {
             Authorization: `Bearer ${process.env.HUBSPOT_API_KEY}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            properties: [
-              {
-                property: "email",
-                value: email,
-              },
-            ],
-          }),
+          body: JSON.stringify({ properties }),
         }
       )
 
@@ -97,7 +104,7 @@ export async function POST(req: NextRequest) {
         updateResponse.status === 204 ? {} : await updateResponse.json()
       return NextResponse.json(updatedContact, { status: 200 })
     } else {
-      // If contact doesn't exist, create a new contact
+      // Create new contact
       const createResponse = await fetch(
         "https://api.hubapi.com/contacts/v1/contact",
         {
@@ -106,14 +113,7 @@ export async function POST(req: NextRequest) {
             Authorization: `Bearer ${process.env.HUBSPOT_API_KEY}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({
-            properties: [
-              {
-                property: "email",
-                value: email,
-              },
-            ],
-          }),
+          body: JSON.stringify({ properties }),
         }
       )
 

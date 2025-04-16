@@ -1,7 +1,8 @@
 "use client"
 
-import type React from "react"
 import { useState, useEffect } from "react"
+import { useFormik } from "formik"
+import * as Yup from "yup"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -9,14 +10,27 @@ import { Label } from "@/components/ui/label"
 import { motion } from "framer-motion"
 import { useToast } from "@/hooks/use-toast"
 
-type EmailVerificationProps = {}
-
-export function EmailVerification({}: EmailVerificationProps) {
-  const [email, setEmail] = useState("")
+export function EmailVerification() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""])
   const [isOtpVisible, setIsOtpVisible] = useState(false)
   const [isVerified, setIsVerified] = useState(false)
   const { toast } = useToast()
+
+  const formik = useFormik({
+    initialValues: {
+      firstName: "",
+      lastName: "",
+      organizationName: "",
+      email: "",
+    },
+    validationSchema: Yup.object({
+      firstName: Yup.string().required("First name is required"),
+      lastName: Yup.string().required("Last name is required"),
+      organizationName: Yup.string().required("Organization name is required"),
+      email: Yup.string().email("Invalid email").required("Email is required"),
+    }),
+    onSubmit: () => sendOTP(),
+  })
 
   useEffect(() => {
     if (isOtpVisible) {
@@ -28,10 +42,7 @@ export function EmailVerification({}: EmailVerificationProps) {
   }, [isOtpVisible, toast])
 
   const handleChange = (index: number, value: string) => {
-    if (value.length > 1) {
-      value = value.slice(0, 1)
-    }
-
+    if (value.length > 1) value = value.slice(0, 1)
     if (value && !/^\d+$/.test(value)) return
 
     const newOtp = [...otp]
@@ -57,31 +68,16 @@ export function EmailVerification({}: EmailVerificationProps) {
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     e.preventDefault()
     const pasted = e.clipboardData.getData("text").trim()
-
     if (!/^\d{6}$/.test(pasted)) return
-
-    const digits = pasted.split("").slice(0, 6)
-    setOtp(digits)
-
-    const lastInput = document.getElementById("otp-5")
-    if (lastInput) lastInput.focus()
+    setOtp(pasted.split(""))
   }
 
   const sendOTP = async () => {
-    if (!email) {
-      toast({
-        title: "Invalid email",
-        description: "Please enter a valid email address.",
-        variant: "destructive",
-      })
-      return
-    }
-
     try {
       const response = await fetch("/api/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: formik.values.email }),
       })
 
       const data = await response.json()
@@ -89,7 +85,6 @@ export function EmailVerification({}: EmailVerificationProps) {
 
       setIsOtpVisible(true)
     } catch (error) {
-      console.error("Error sending OTP:", error)
       toast({
         title: "Error",
         description:
@@ -103,7 +98,6 @@ export function EmailVerification({}: EmailVerificationProps) {
 
   const verifyOTP = async () => {
     const otpValue = otp.join("")
-
     if (otpValue.length !== 6) {
       toast({
         title: "Invalid code",
@@ -117,7 +111,7 @@ export function EmailVerification({}: EmailVerificationProps) {
       const response = await fetch("/api/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, otp: otpValue }),
+        body: JSON.stringify({ email: formik.values.email, otp: otpValue }),
       })
 
       const data = await response.json()
@@ -125,24 +119,29 @@ export function EmailVerification({}: EmailVerificationProps) {
 
       toast({
         title: "Verification successful",
-        description: "Your email has been verified successfully.",
+        description: "Your email has been verified.",
       })
-
       setIsVerified(true)
 
-      // Call HubSpot
-      await handleHubSpotContact(email)
-
-      await fetch("/api/send-report", {
+      await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email,
+          ...formik.values,
+          source: "Surgical Calculator",
           encoded: localStorage.getItem("encoded"),
         }),
       })
+
+      // await fetch("/api/send-report", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({
+      //     email: formik.values.email,
+      //     encoded: localStorage.getItem("encoded"),
+      //   }),
+      // })
     } catch (error) {
-      console.error("Error verifying OTP:", error)
       toast({
         title: "Error",
         description:
@@ -152,43 +151,6 @@ export function EmailVerification({}: EmailVerificationProps) {
         variant: "destructive",
       })
     }
-  }
-
-  const handleHubSpotContact = async (email: string): Promise<void> => {
-    try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      })
-
-      const text = await response.text()
-      const data = text ? JSON.parse(text) : {}
-      if (!response.ok)
-        throw new Error(
-          data.message || "Failed to create/update contact in HubSpot"
-        )
-
-      console.log("HubSpot contact created/updated:", data)
-    } catch (error) {
-      console.error("Error with HubSpot API:", error)
-      toast({
-        title: "Error",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Failed to create or update HubSpot contact",
-        variant: "destructive",
-      })
-    }
-  }
-
-  const handleResendCode = () => {
-    sendOTP()
-    toast({
-      title: "New code sent",
-      description: "We've sent a new verification code to your email.",
-    })
   }
 
   return (
@@ -201,56 +163,94 @@ export function EmailVerification({}: EmailVerificationProps) {
       {isVerified ? (
         <Card className="p-6 shadow-sm border rounded-lg text-center">
           <p className="text-xl font-semibold text-primary mb-2">
-            Thank you for verifying your email!
+            Thanks for verifying your email!
           </p>
           <p className="text-gray-700">
             Your report will be shared with you soon.
           </p>
         </Card>
       ) : (
-        <Card className="p-6 shadow-sm border rounded-lg">
-          <div className="mb-6">
-            <p className="text-center">
-              These improvements come from key factors such as{" "}
-              <span className="font-medium text-primary">
-                Planning Accuracy, Flow Smoothing,
-              </span>{" "}
-              and{" "}
-              <span className="font-medium text-primary">
-                Priority Planning
-              </span>
-              . To see how each factor impacts your hospital's efficiency, enter
-              your email below.
-            </p>
-          </div>
-
-          <div className="space-y-4 max-w-md mx-auto">
-            <div>
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="bg-blue-50"
-              />
+        <Card className="p-6 shadow-sm border rounded-lg max-w-xl mx-auto">
+          <form className="space-y-4" onSubmit={formik.handleSubmit}>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="firstName">First Name</Label>
+                <Input
+                  id="firstName"
+                  name="firstName"
+                  value={formik.values.firstName}
+                  onChange={formik.handleChange}
+                  className="bg-blue-50"
+                />
+                {formik.touched.firstName && formik.errors.firstName && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {formik.errors.firstName}
+                  </p>
+                )}
+              </div>
+              <div>
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input
+                  id="lastName"
+                  name="lastName"
+                  value={formik.values.lastName}
+                  onChange={formik.handleChange}
+                  className="bg-blue-50"
+                />
+                {formik.touched.lastName && formik.errors.lastName && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {formik.errors.lastName}
+                  </p>
+                )}
+              </div>
             </div>
 
-            {!isOtpVisible && (
-              <div className="flex justify-center mt-6">
+            <div>
+              <Label htmlFor="organizationName">Organization Name</Label>
+              <Input
+                id="organizationName"
+                name="organizationName"
+                value={formik.values.organizationName}
+                onChange={formik.handleChange}
+                className="bg-blue-50"
+              />
+              {formik.touched.organizationName &&
+                formik.errors.organizationName && (
+                  <p className="text-sm text-red-500 mt-1">
+                    {formik.errors.organizationName}
+                  </p>
+                )}
+            </div>
+
+            <div>
+              <Label htmlFor="email">Your Email</Label>
+              <Input
+                id="email"
+                name="email"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                className="bg-blue-50"
+              />
+              {formik.touched.email && formik.errors.email && (
+                <p className="text-sm text-red-500 mt-1">
+                  {formik.errors.email}
+                </p>
+              )}
+            </div>
+
+            {!isOtpVisible ? (
+              <div className="flex justify-center pt-4">
                 <Button
-                  onClick={sendOTP}
-                  className="bg-primary hover:bg-primary/90 text-white"
+                  type="submit"
+                  className="bg-primary text-white px-6 py-2 rounded-md"
                 >
-                  Verify Email
+                  Send OTP
                 </Button>
               </div>
-            )}
-
-            {isOtpVisible && (
+            ) : (
               <>
                 <div>
-                  <Label>Enter verification code sent to your email</Label>
+                  <Label>Enter the 6-digit code</Label>
                   <div className="flex justify-center gap-2 mt-2">
                     {otp.map((digit, index) => (
                       <Input
@@ -269,28 +269,25 @@ export function EmailVerification({}: EmailVerificationProps) {
                     ))}
                   </div>
                 </div>
-
-                <div className="flex justify-center mt-4">
+                <div className="flex justify-center gap-4 mt-6">
                   <Button
+                    onClick={verifyOTP}
+                    className="bg-primary text-white px-6 py-2"
+                  >
+                    Verify OTP
+                  </Button>
+                  <Button
+                    type="button"
                     variant="outline"
-                    onClick={handleResendCode}
+                    onClick={sendOTP}
                     className="border-primary text-primary hover:bg-primary hover:text-white"
                   >
                     Resend Code
                   </Button>
                 </div>
-
-                <div className="flex justify-center mt-6">
-                  <Button
-                    onClick={verifyOTP}
-                    className="bg-primary hover:bg-primary/90 text-white"
-                  >
-                    Verify OTP
-                  </Button>
-                </div>
               </>
             )}
-          </div>
+          </form>
         </Card>
       )}
     </motion.div>
