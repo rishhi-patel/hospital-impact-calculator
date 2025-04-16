@@ -78,6 +78,13 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      fontSize: {
+        sm: ["14px", { lineHeight: "150%" }],
+        "3xl": ["28px", { lineHeight: "100%" }], // exact match
+      },
+      letterSpacing: {
+        tightest: "0%",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
