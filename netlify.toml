@@ -4,7 +4,7 @@
 
 [build.environment]
   PUPPETEER_SKIP_DOWNLOAD = "true"
-  PUPPETEER_EXECUTABLE_PATH = "/opt/buildhome/.nvm/versions/node/v16.15.0/bin/chromium"
+  PUPPETEER_EXECUTABLE_PATH = "/opt/buildhome/.cache/puppeteer/chrome/linux-135.0.7049.42/chrome-linux64/chrome"
 
 [functions]
   directory = ".netlify/functions"
