@@ -1,8 +1,11 @@
 import { sendDetailedReportEmail } from "@/lib/sendgrid"
 import { NextRequest, NextResponse } from "next/server"
-import puppeteer from "puppeteer-core" // Use puppeteer-core
+import chromium from "chrome-aws-lambda"
+import puppeteer from "puppeteer-core"
 
 export async function POST(req: NextRequest) {
+  let browser = null
+
   try {
     const { encoded, email } = await req.json()
 
@@ -16,9 +19,7 @@ export async function POST(req: NextRequest) {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
     const pdfPageUrl = `${baseUrl}/pdf-render?data=${encoded}`
 
-    // Define the Chromium executable path from the environment or default to Puppeteer
-    const executablePath =
-      process.env.PUPPETEER_EXECUTABLE_PATH || puppeteer.executablePath()
+    const executablePath = await chromium.executablePath
 
     if (!executablePath) {
       console.error("Chromium executable path not found!")
@@ -28,22 +29,22 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    // Launch Puppeteer with the given executable path
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      executablePath, // Use the executable path
+    // Launch Puppeteer with chrome-aws-lambda configuration
+    browser = await puppeteer.launch({
+      args: chromium.args,
+      executablePath,
+      headless: chromium.headless,
     })
 
     const page = await browser.newPage()
-    await page.goto(pdfPageUrl, { waitUntil: "networkidle0" })
+    await page.goto(pdfPageUrl, {
+      waitUntil: ["domcontentloaded", "networkidle0"],
+    })
 
     const pdfBuffer = await page.pdf({
       format: "A4",
       printBackground: true,
     })
-
-    await browser.close()
 
     const fileName = "SurgiTwin_Performance_Report.pdf"
     const mimeType = "application/pdf"
@@ -70,5 +71,9 @@ export async function POST(req: NextRequest) {
       { success: false, message: "Internal Server Error" },
       { status: 500 }
     )
+  } finally {
+    if (browser !== null) {
+      await browser.close()
+    }
   }
 }
