@@ -24,31 +24,3 @@ export const generatePDF = (elementId: string): void => {
     console.error("SSR is not supported for PDF generation")
   }
 }
-
-export const downloadPDF = async (encoded: string) => {
-  const res = await fetch("/api/generate-pdf", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ encoded }),
-  })
-
-  if (!res.ok) {
-    console.error("Failed to generate PDF")
-    return
-  }
-
-  const blob = await res.blob()
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement("a")
-  a.href = url
-  a.download = "SurgiTwin_Performance_Report.pdf"
-  a.click()
-}
-
-export const encodePayload = (obj: object) =>
-  Buffer.from(JSON.stringify(obj)).toString("base64")
-
-export const decodePayload = (encoded: string) =>
-  JSON.parse(Buffer.from(encoded, "base64").toString("utf-8"))
