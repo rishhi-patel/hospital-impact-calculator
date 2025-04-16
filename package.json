@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "install-chromium": "apt-get update && apt-get install -y chromium",
+    "build": "npm run install-chromium && npm run build",
     "start": "next start",
     "lint": "next lint",
     "netlify:build": "netlify build"
