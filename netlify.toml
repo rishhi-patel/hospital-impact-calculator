@@ -2,8 +2,14 @@
   command = "npm install --legacy-peer-deps && npm run build"
   publish = ".next"
 
+[build.environment]
+  PUPPETEER_SKIP_DOWNLOAD = "true"
+  PUPPETEER_EXECUTABLE_PATH = "/opt/buildhome/.nvm/versions/node/v16.15.0/bin/chromium"
+
 [functions]
   directory = ".netlify/functions"
 
 [[plugins]]
   package = "netlify-plugin-chromium"
+
+
