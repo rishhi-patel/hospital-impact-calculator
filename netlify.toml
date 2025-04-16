@@ -5,5 +5,5 @@
 [functions]
   directory = ".netlify/functions"
 
-[plugins]
+[[plugins]]
   package = "netlify-plugin-chromium"
