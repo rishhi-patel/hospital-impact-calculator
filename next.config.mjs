@@ -15,11 +15,15 @@ const nextConfig = {
     parallelServerCompiles: true,
   },
   reactStrictMode: true,
-  webpack(config) {
-    config.module.rules.push({
-      test: /\.map$/,
-      use: "ignore-loader", // Ignores the source map files
-    })
+  webpack(config, { isServer }) {
+    // Add a custom Webpack rule to ignore source map files from chrome-aws-lambda
+    if (!isServer) {
+      config.module.rules.push({
+        test: /\.map$/,
+        use: "null-loader",
+      })
+    }
+
     return config
   },
 }
