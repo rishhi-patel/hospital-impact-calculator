@@ -38,7 +38,7 @@ export default function SurgicalReport({
     General: "General",
     Gynaecologic: "Gynaecologic",
     Neurosurgery: "Neurosurgery",
-    Ophthalmic: "Ophthalmic",
+    Ophthalmic: "Ophthalmology",
     Orthopaedic: "Orthopaedic",
     Oral_and_Maxillofacial_and_Dentistry:
       "Oral and Maxillofacial and Dentistry",
@@ -226,7 +226,7 @@ export default function SurgicalReport({
         })}
 
         {/* Key Definitions */}
-        <section className="max-w-6xl mx-auto w-full px-6 pt-24">
+        <section className="max-w-6xl mx-auto w-full px-6 pt-16">
           <h4 className="text-lg font-semibold text-magnet mb-6">
             Key Definitions
           </h4>

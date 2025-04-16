@@ -21,12 +21,23 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
   const formatNumber = (num: number) =>
     new Intl.NumberFormat("en-US").format(num)
 
+  const formatRoundedNumber = (num: number): number => {
+    return Math.round(num / 100) * 100
+  }
+
   const formatCurrency = (num: number) =>
     new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       maximumFractionDigits: 0,
     }).format(num)
+
+  const formatRoundedCurrency = (num: number) =>
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      maximumFractionDigits: 0,
+    }).format(Math.round(num / 100) * 100)
 
   const InfoBox = ({
     value,
@@ -53,7 +64,7 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
         }}
       >
         <span className="text-3xl font-bold leading-tight">
-          {isCurrency ? formatCurrency(value) : formatNumber(value)}
+          {isCurrency ? formatRoundedCurrency(value) : formatNumber(value)}
         </span>
         {unit && <span className="text-sm ml-1">{unit}</span>}
       </div>
@@ -94,10 +105,10 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
 
         <div className="space-y-4 mb-6">
           <InfoBox
-            value={data.totalBlocks}
+            value={formatRoundedNumber(data.totalBlocks)}
             unit="blocks"
             title="Total Surgical Blocks Estimate"
-            subtitle={`You have an estimated ${formatNumber(
+            subtitle={`You have an estimated ${formatRoundedNumber(
               data.totalBlocks
             )} blocks based on your services`}
           />
@@ -118,7 +129,7 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
           <InfoBox
             value={data.financialImpact}
             title="Financial Impact (Cost Savings or Revenue Increase)"
-            subtitle={`With improved performance, your potential $ impact is ${formatCurrency(
+            subtitle={`With improved performance, your potential $ impact is ${formatRoundedCurrency(
               data.financialImpact
             )} per year.`}
             isCurrency
