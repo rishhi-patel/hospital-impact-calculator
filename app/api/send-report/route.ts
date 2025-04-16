@@ -1,6 +1,6 @@
 import { sendDetailedReportEmail } from "@/lib/sendgrid"
 import { NextRequest, NextResponse } from "next/server"
-import puppeteer from "puppeteer-core" // Use puppeteer-core
+import puppeteer from "puppeteer" // Use puppeteer-core
 
 export async function POST(req: NextRequest) {
   try {
@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     const browser = await puppeteer.launch({
       headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      executablePath, // Use the executable path
+      executablePath: process.env.PUPPETEER_EXECUTABLE_PATH, // Automatically set by Netlify
     })
 
     const page = await browser.newPage()
