@@ -1,6 +1,11 @@
 import { sendDetailedReportEmail } from "@/lib/sendgrid"
 import { NextRequest, NextResponse } from "next/server"
-import puppeteer from "puppeteer-core" // Use puppeteer-core
+import puppeteerCore from "puppeteer-core"
+import puppeteer from "puppeteer"
+import chromium from "@sparticuz/chromium-min"
+
+const remoteExecutablePath =
+  "https://github.com/Sparticuz/chromium/releases/download/v133.0.0/chromium-v133.0.0-pack.tar"
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,27 +18,22 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+    const baseUrl =
+      process.env.NEXT_PUBLIC_NETLIFY_ENVIRONMENT || "http://localhost:3000"
     const pdfPageUrl = `${baseUrl}/pdf-render?data=${encoded}`
 
-    // Define the Chromium executable path from the environment or default to Puppeteer
-    const executablePath =
-      process.env.PUPPETEER_EXECUTABLE_PATH || puppeteer.executablePath()
+    const isProd = process.env.NEXT_PUBLIC_VERCEL_ENVIRONMENT === "production"
 
-    if (!executablePath) {
-      console.error("Chromium executable path not found!")
-      return NextResponse.json(
-        { success: false, message: "Chromium executable path not found" },
-        { status: 500 }
-      )
-    }
-
-    // Launch Puppeteer with the given executable path
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-      executablePath, // Use the executable path
-    })
+    const browser = await (isProd
+      ? puppeteerCore.launch({
+          args: chromium.args,
+          executablePath: await chromium.executablePath(remoteExecutablePath),
+          headless: chromium.headless,
+        })
+      : puppeteer.launch({
+          args: ["--no-sandbox", "--disable-setuid-sandbox"],
+          headless: true,
+        }))
 
     const page = await browser.newPage()
     await page.goto(pdfPageUrl, { waitUntil: "networkidle0" })
@@ -48,7 +48,6 @@ export async function POST(req: NextRequest) {
     const fileName = "SurgiTwin_Performance_Report.pdf"
     const mimeType = "application/pdf"
 
-    // ✅ Send the email with the PDF buffer
     const success = await sendDetailedReportEmail(
       email,
       Buffer.from(pdfBuffer),
@@ -67,7 +66,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("send-report API error:", error)
     return NextResponse.json(
-      { success: false, message: "Internal Server Error" },
+      { success: false, message: "Internal error" },
       { status: 500 }
     )
   }
