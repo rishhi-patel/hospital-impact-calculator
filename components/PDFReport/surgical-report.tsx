@@ -51,7 +51,7 @@ export default function SurgicalReport({
   const departmentEntries = Object.entries(departmentDetails)
 
   return (
-    <div className="bg-white text-black">
+    <div className="bg-white text-black" id="final-report">
       {/* Fixed Header */}
       <header className="bg-magnet text-white p-4 print:fixed print:top-0 print:left-0 print:right-0">
         <div className="max-w-6xl mx-auto flex justify-between">
@@ -236,8 +236,8 @@ export default function SurgicalReport({
                 Planning Accuracy
               </span>
               <span>
-                SurgiTwin™ improves planning accuracy by aligning estimated case
-                durations with actual times, reducing over- and
+                SurgiTwin™ improves planning accuracy by aligning estimated
+                case durations with actual times, reducing over- and
                 under-scheduling.
               </span>
             </div>
@@ -246,8 +246,9 @@ export default function SurgicalReport({
                 Flow Smoothing
               </span>
               <span>
-                SurgiTwin™ minimizes disruptions like same-day cancellations and
-                delays to ensure a smoother, more reliable surgical schedule.
+                SurgiTwin™ minimizes disruptions like same-day cancellations
+                and delays to ensure a smoother, more reliable surgical
+                schedule.
               </span>
             </div>
             <div className="flex">
