@@ -160,6 +160,29 @@ export function EmailVerification() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
+      <div className="p-6 rounded-lg mb-6 text-center">
+        <h3 className="font-semibold text-lg text-gray-800">
+          Get a detailed breakdown of your department’s performance potential,
+          including:
+        </h3>
+        <ul className="list-disc list-inside text-gray-700 mt-2">
+          <li>Planning Accuracy</li>
+          <li>Resource Smoothing</li>
+          <li>Duration Prediction</li>
+        </ul>
+        <p className="text-gray-700 mt-4">
+          Enter your email to receive the report or{" "}
+          <a
+            href="https://share.hsforms.com/2ILISPQpWSP6DHAWdHo54qgebhsr"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary underline font-medium"
+          >
+            contact us for a demo
+          </a>
+          .
+        </p>
+      </div>
       {isVerified ? (
         <Card className="p-6 shadow-sm border rounded-lg text-center">
           <p className="text-xl font-semibold text-primary mb-2">

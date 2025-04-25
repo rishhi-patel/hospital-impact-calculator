@@ -76,14 +76,14 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
   )
 
   const projectedSubtitle = data.currentCases
-    ? `You could perform an additional ${formatNumber(
+    ? `Efficiency gains could enable your department to perform an additional ${formatNumber(
         data.projectedCases - data.currentCases
-      )} cases per year, moving from ${formatNumber(
+      )} cases annually, increasing total volume from ${formatNumber(
         data.currentCases
       )} to ${formatNumber(data.projectedCases)} cases.`
-    : `You could perform an additional ${formatNumber(
+    : `Efficiency gains could enable your department to perform an additional ${formatNumber(
         data.projectedCases
-      )} cases per year.`
+      )} cases annually.`
 
   return (
     <motion.div
@@ -98,8 +98,8 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
             Your Surgery Department’s Performance Impact
           </h2>
           <p className="text-gray-600 mt-1">
-            Based on your input, here’s your hospital’s estimated performance
-            impact:
+            Based on the information provided, here is the estimated performance
+            impact for your surgical department:
           </p>
         </div>
 
@@ -108,17 +108,17 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
             value={formatRoundedNumber(data.totalBlocks)}
             unit="blocks"
             title="Total Surgical Blocks Estimate"
-            subtitle={`You have an estimated ${formatRoundedNumber(
+            subtitle={`Your department is estimated to require ${formatRoundedNumber(
               data.totalBlocks
-            )} blocks based on your services`}
+            )} surgical blocks annually based on current services and case volume.`}
           />
           <InfoBox
             value={data.potentialReduction}
             unit="blocks"
             title="Potential Block Reduction"
-            subtitle={`By improving efficiency, you could reduce this total by ${formatNumber(
+            subtitle={`Improved efficiency could reduce block usage by approximately ${formatNumber(
               data.potentialReduction
-            )} blocks.`}
+            )} blocks per year, freeing up valuable OR time.`}
           />
           <InfoBox
             value={data.projectedCases - (data.currentCases ?? 0)}
@@ -129,9 +129,9 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
           <InfoBox
             value={data.financialImpact}
             title="Financial Impact (Cost Savings or Revenue Increase)"
-            subtitle={`With improved performance, your potential $ impact is ${formatRoundedCurrency(
+            subtitle={`Enhanced performance could generate an estimated ${formatRoundedCurrency(
               data.financialImpact
-            )} per year.`}
+            )} in annual financial impact, through cost savings or increased surgical revenue.`}
             isCurrency
           />
         </div>
