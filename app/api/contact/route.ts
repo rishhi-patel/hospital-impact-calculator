@@ -1,4 +1,8 @@
 import { NextRequest, NextResponse } from "next/server"
+import puppeteer from "puppeteer"
+import FormData from "form-data"
+import fetch from "node-fetch"
+import { Readable } from "stream"
 
 // Fetch all contacts
 export async function GET() {
@@ -17,7 +21,8 @@ export async function GET() {
     if (!response.ok) {
       const errorData = await response.json()
       throw new Error(
-        errorData.message || "Failed to fetch contacts from HubSpot"
+        (errorData as { message?: string }).message ||
+          "Failed to fetch contacts from HubSpot"
       )
     }
 
@@ -59,12 +64,74 @@ export async function POST(req: NextRequest) {
     if (!searchResponse.ok) {
       const errorData = await searchResponse.json()
       throw new Error(
-        errorData.message || "Failed to search contact in HubSpot"
+        (errorData as { message?: string }).message ||
+          "Failed to search contact in HubSpot"
       )
     }
 
-    const searchData = await searchResponse.json()
+    const searchData = (await searchResponse.json()) as {
+      total: number
+      contacts: { vid: string }[]
+    }
     let contactId = null
+
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+    const pdfPageUrl = `${baseUrl}/pdf-render?data=${encoded}`
+
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    })
+
+    const page = await browser.newPage()
+    await page.goto(pdfPageUrl, { waitUntil: "networkidle0" })
+
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+      printBackground: true,
+    })
+
+    await browser.close()
+
+    // ✅ Upload to HubSpot using buffer
+    const form = new FormData()
+    const stream = new Readable()
+    stream.push(pdfBuffer)
+    stream.push(null)
+
+    form.append("file", stream, {
+      filename: `${email}_report.pdf`,
+      contentType: "application/pdf",
+    })
+    form.append("options", JSON.stringify({ access: "PUBLIC_INDEXABLE" }))
+    form.append("folderPath", "/reports") // optional; adjust as needed
+
+    const uploadResponse = await fetch(
+      "https://api.hubapi.com/files/v3/files",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.HUBSPOT_API_KEY}`,
+          ...form.getHeaders(), // IMPORTANT: sets correct multipart boundaries
+        },
+        body: form,
+      }
+    )
+
+    if (!uploadResponse.ok) {
+      const errorText = await uploadResponse.text()
+      throw new Error("Upload failed: " + errorText)
+    }
+
+    const result = (await uploadResponse.json()) as {
+      url?: string
+      fileUrl?: string
+    }
+    console.log("✅ Uploaded file URL:", result.url || result.fileUrl)
+
+    const publicUrl =
+      result.url ||
+      `${process.env.NEXT_PUBLIC_APP_URL}/pdf-render?data=${encoded}`
 
     const properties = [
       { property: "email", value: email },
@@ -75,7 +142,7 @@ export async function POST(req: NextRequest) {
       { property: "report_status", value: "Pending" },
       {
         property: "report_preview_link",
-        value: `${process.env.NEXT_PUBLIC_APP_URL}/pdf-render?data=${encoded}`,
+        value: publicUrl,
       },
     ]
 
@@ -97,7 +164,10 @@ export async function POST(req: NextRequest) {
 
       if (!updateResponse.ok) {
         const errorData = await updateResponse.json()
-        throw new Error(errorData.message || "Failed to update contact")
+        throw new Error(
+          (errorData as { message?: string }).message ||
+            "Failed to update contact"
+        )
       }
 
       const updatedContact =
@@ -119,7 +189,10 @@ export async function POST(req: NextRequest) {
 
       if (!createResponse.ok) {
         const errorData = await createResponse.json()
-        throw new Error(errorData.message || "Failed to create contact")
+        throw new Error(
+          (errorData as { message?: string }).message ||
+            "Failed to create contact"
+        )
       }
 
       const newContact = await createResponse.json()
