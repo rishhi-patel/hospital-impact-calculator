@@ -47,7 +47,7 @@ export function SurgicalForm({
     { id: "Gynaecologic", name: "Gynaecologic" },
     { id: "Neurosurgery", name: "Neurosurgery" },
     { id: "Ophthalmic", name: "Ophthalmology" },
-    { id: "Orthopaedic", name: "Orthopaedic" },
+    { id: "Orthopaedic", name: "Ophthalmology" },
     {
       id: "Oral_and_Maxillofacial_and_Dentistry",
       name: "Oral and Maxillofacial and Dentistry",
@@ -111,7 +111,6 @@ export function SurgicalForm({
         return
       }
 
-      // Validate case volumes
       let invalidVolume = false
       selectedServices.forEach((id) => {
         const volume = caseVolumes[id]
@@ -145,9 +144,7 @@ export function SurgicalForm({
       }
 
       localStorage.setItem("encoded", encodePayload(parameters))
-      await onCalculate({
-        parameters,
-      })
+      await onCalculate({ parameters })
       setLoading(false)
     },
   })
@@ -162,10 +159,10 @@ export function SurgicalForm({
     <Card className="p-6 shadow-sm border rounded-lg">
       <form onSubmit={formik.handleSubmit}>
         <div className="space-y-8">
-          {/* Department Type */}
           <div className="grid md:grid-cols-2 gap-6 items-start">
             <Label className="font-semibold">
-              What type of surgical department do you work in?
+              Select the type of healthcare facility where surgeries are
+              performed:
             </Label>
             <div>
               <Select
@@ -191,10 +188,9 @@ export function SurgicalForm({
             </div>
           </div>
 
-          {/* Block Duration */}
           <div className="grid md:grid-cols-2 gap-6 items-start">
             <Label className="font-semibold">
-              What is the standard block duration in your surgical department?
+              Select the typical scheduled time for a full OR block in minutes:
             </Label>
             <div>
               <Select
@@ -220,11 +216,9 @@ export function SurgicalForm({
             </div>
           </div>
 
-          {/* Services */}
           <div>
             <Label className="font-semibold mb-2 block">
-              Which surgical services does your department offer? (Select all
-              that apply)
+              Select all surgical specialties supported by the department:
             </Label>
             <div className="flex flex-wrap gap-2">
               {serviceCategories.map((cat) => {
@@ -252,18 +246,20 @@ export function SurgicalForm({
             )}
           </div>
 
-          {/* Case Volume Inputs */}
           {selectedServices.length > 0 && (
             <div className="space-y-4">
               {selectedServices.map((id) => {
-                const label =
+                const service =
                   serviceCategories.find((s) => s.id === id)?.name || id
                 return (
                   <div
                     key={id}
                     className="grid md:grid-cols-2 gap-6 items-start"
                   >
-                    <Label className="font-semibold">{label} Case Volume</Label>
+                    <Label className="font-semibold">
+                      Enter the total number of surgical cases performed per
+                      year for {service} :
+                    </Label>
                     <Input
                       type="number"
                       min={1}
@@ -282,10 +278,10 @@ export function SurgicalForm({
             </div>
           )}
 
-          {/* Cost Rate */}
           <div className="grid md:grid-cols-2 gap-6 items-start">
             <Label className="font-semibold">
-              What is your department’s estimated cost/revenue rate per minute?
+              Select the average cost savings or revenue generated per minute of
+              OR time:
             </Label>
             <div>
               <Select
@@ -311,10 +307,9 @@ export function SurgicalForm({
             </div>
           </div>
 
-          {/* Current Performance */}
           <div className="grid md:grid-cols-2 gap-6 items-start">
             <Label className="font-semibold">
-              How would you rate your department’s current performance?
+              How does the department currently perform?
             </Label>
             <div>
               <Select
@@ -346,10 +341,9 @@ export function SurgicalForm({
             </div>
           </div>
 
-          {/* Comparison Level */}
           <div className="grid md:grid-cols-2 gap-6 items-start">
             <Label className="font-semibold">
-              What level of performance would you like to compare to?
+              what benchmark would you like to compare it to?
             </Label>
             <div>
               <Select
@@ -382,7 +376,6 @@ export function SurgicalForm({
             </div>
           </div>
 
-          {/* Submit Button */}
           <div className="flex justify-center">
             <Button
               type="submit"

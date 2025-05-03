@@ -152,17 +152,12 @@ export function EmailVerification() {
       transition={{ duration: 0.5 }}
     >
       <div className="p-6 rounded-lg mb-6 text-center">
-        <h3 className="font-semibold text-lg text-gray-800">
-          Get a detailed breakdown of your department’s performance potential,
-          including:
-        </h3>
-        <ul className="list-disc list-inside text-gray-700 mt-2">
-          <li>Planning Accuracy</li>
-          <li>Resource Smoothing</li>
-          <li>Duration Prediction</li>
-        </ul>
         <p className="text-gray-700 mt-4">
-          Enter your email to receive the report or{" "}
+          Enter your email to receive a detailed breakdown of your department’s
+          performance potential, including key areas of improvement:{" "}
+          <strong>Planning Accuracy</strong>,{" "}
+          <strong>Resource Smoothing</strong>, and{" "}
+          <strong>Duration Prediction</strong>. or{" "}
           <a
             href="https://share.hsforms.com/2ILISPQpWSP6DHAWdHo54qgebhsr"
             target="_blank"

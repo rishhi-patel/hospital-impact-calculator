@@ -128,7 +128,7 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
           />
           <InfoBox
             value={data.financialImpact}
-            title="Financial Impact (Cost Savings or Revenue Increase)"
+            title="Financial Impact (Cost Savings or Revenue Uplift)"
             subtitle={`Enhanced performance could generate an estimated ${formatRoundedCurrency(
               data.financialImpact
             )} in annual financial impact, through cost savings or increased surgical revenue.`}
