@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server"
-import puppeteer from "puppeteer"
 import FormData from "form-data"
 import fetch from "node-fetch"
 import { Readable } from "stream"
@@ -78,20 +77,24 @@ export async function POST(req: NextRequest) {
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
     const pdfPageUrl = `${baseUrl}/pdf-render?data=${encoded}`
 
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    })
+    // Fetch PDF buffer from external endpoint
+    const pdfResponse = await fetch(
+      "https://puppeter-test-pearl.vercel.app/api/web-to-pdf",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ encoded }),
+      }
+    )
 
-    const page = await browser.newPage()
-    await page.goto(pdfPageUrl, { waitUntil: "networkidle0" })
+    if (!pdfResponse.ok) {
+      const errorText = await pdfResponse.text()
+      throw new Error("Failed to generate PDF: " + errorText)
+    }
 
-    const pdfBuffer = await page.pdf({
-      format: "A4",
-      printBackground: true,
-    })
-
-    await browser.close()
+    const pdfBuffer = await pdfResponse.buffer()
 
     // ✅ Upload to HubSpot using buffer
     const form = new FormData()
@@ -204,15 +207,5 @@ export async function POST(req: NextRequest) {
       { message: error.message || "Internal Server Error" },
       { status: 500 }
     )
-  }
-}
-
-export async function handler(req: NextRequest) {
-  if (req.method === "POST") {
-    return POST(req)
-  } else if (req.method === "GET") {
-    return GET()
-  } else {
-    return NextResponse.json({ message: "Method Not Allowed" }, { status: 405 })
   }
 }
