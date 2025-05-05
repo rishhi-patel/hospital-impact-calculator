@@ -9,11 +9,13 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { motion } from "framer-motion"
 import { useToast } from "@/hooks/use-toast"
+import { Loader2 } from "lucide-react"
 
 export function EmailVerification() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""])
   const [isOtpVisible, setIsOtpVisible] = useState(false)
   const [isVerified, setIsVerified] = useState(false)
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false)
   const { toast } = useToast()
 
   const formik = useFormik({
@@ -29,7 +31,7 @@ export function EmailVerification() {
       organizationName: Yup.string().required("Organization name is required"),
       email: Yup.string().email("Invalid email").required("Email is required"),
     }),
-    onSubmit: () => {}, // intentionally empty to decouple sendOTP from form submit
+    onSubmit: () => {},
   })
 
   useEffect(() => {
@@ -121,7 +123,8 @@ export function EmailVerification() {
         title: "Verification successful",
         description: "Your email has been verified.",
       })
-      setIsVerified(true)
+
+      setIsGeneratingReport(true)
 
       await fetch("/api/contact", {
         method: "POST",
@@ -132,6 +135,8 @@ export function EmailVerification() {
           encoded: localStorage.getItem("encoded"),
         }),
       })
+
+      setIsVerified(true)
     } catch (error) {
       toast({
         title: "Error",
@@ -141,6 +146,8 @@ export function EmailVerification() {
             : "Failed to verify verification code",
         variant: "destructive",
       })
+    } finally {
+      setIsGeneratingReport(false)
     }
   }
 
@@ -170,17 +177,25 @@ export function EmailVerification() {
         </p>
       </div>
 
-      {isVerified ? (
-        <Card className="p-6 shadow-sm border rounded-lg text-center">
-          <p className="text-xl font-semibold text-primary mb-2">
-            Thanks for verifying your email!
-          </p>
-          <p className="text-gray-700">
-            Your report will be shared with you soon.
-          </p>
-        </Card>
-      ) : (
-        <Card className="p-6 shadow-sm border rounded-lg max-w-xl mx-auto">
+      <Card className="p-6 shadow-sm border rounded-lg max-w-xl mx-auto text-center">
+        {isGeneratingReport ? (
+          <div className="flex flex-col items-center gap-4">
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <p className="text-gray-600 text-sm font-medium">
+              Please wait while your report is being generated. <br /> Do not
+              close or refresh this tab.
+            </p>
+          </div>
+        ) : isVerified ? (
+          <>
+            <p className="text-xl font-semibold text-primary mb-2">
+              Thanks for verifying your email!
+            </p>
+            <p className="text-gray-700">
+              Your report will be shared with you soon.
+            </p>
+          </>
+        ) : (
           <form
             className="space-y-4"
             onSubmit={(e) => {
@@ -293,6 +308,7 @@ export function EmailVerification() {
                         onPaste={handlePaste}
                         className="w-12 h-12 text-center text-lg"
                         autoFocus={index === 0}
+                        disabled={isGeneratingReport}
                       />
                     ))}
                   </div>
@@ -301,6 +317,7 @@ export function EmailVerification() {
                   <Button
                     onClick={verifyOTP}
                     className="bg-primary text-white px-6 py-2"
+                    disabled={isGeneratingReport}
                   >
                     Verify OTP
                   </Button>
@@ -309,6 +326,7 @@ export function EmailVerification() {
                     variant="outline"
                     onClick={sendOTP}
                     className="border-primary text-primary hover:bg-primary hover:text-white"
+                    disabled={isGeneratingReport}
                   >
                     Resend Code
                   </Button>
@@ -316,8 +334,8 @@ export function EmailVerification() {
               </>
             )}
           </form>
-        </Card>
-      )}
+        )}
+      </Card>
     </motion.div>
   )
 }
