@@ -67,7 +67,8 @@ export default function SurgicalReport({
         <div className="flex justify-between items-center mb-6">
           <div className="text-xl font-medium">Planning Report</div>
           <div className="text-gray-500 text-sm">
-            {new Date().toLocaleDateString("en-US", {
+            {new Date().toLocaleDateString("en-CA", {
+              timeZone: "America/Toronto",
               weekday: "long",
               year: "numeric",
               month: "long",
@@ -226,7 +227,11 @@ export default function SurgicalReport({
         })}
 
         {/* Key Definitions */}
-        <section className="max-w-6xl mx-auto w-full px-6 pt-16">
+        <section
+          className={`max-w-6xl mx-auto w-full px-6 ${
+            departmentEntries.length === 1 ? "pt-16" : "pt-8"
+          }`}
+        >
           <h4 className="text-lg font-semibold text-magnet mb-6">
             Key Definitions
           </h4>
