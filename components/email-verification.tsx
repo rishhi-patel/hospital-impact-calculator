@@ -29,7 +29,7 @@ export function EmailVerification() {
       organizationName: Yup.string().required("Organization name is required"),
       email: Yup.string().email("Invalid email").required("Email is required"),
     }),
-    onSubmit: () => sendOTP(),
+    onSubmit: () => {}, // intentionally empty to decouple sendOTP from form submit
   })
 
   useEffect(() => {
@@ -169,6 +169,7 @@ export function EmailVerification() {
           .
         </p>
       </div>
+
       {isVerified ? (
         <Card className="p-6 shadow-sm border rounded-lg text-center">
           <p className="text-xl font-semibold text-primary mb-2">
@@ -180,7 +181,12 @@ export function EmailVerification() {
         </Card>
       ) : (
         <Card className="p-6 shadow-sm border rounded-lg max-w-xl mx-auto">
-          <form className="space-y-4" onSubmit={formik.handleSubmit}>
+          <form
+            className="space-y-4"
+            onSubmit={(e) => {
+              e.preventDefault()
+            }}
+          >
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="firstName">First Name</Label>
@@ -250,8 +256,21 @@ export function EmailVerification() {
             {!isOtpVisible ? (
               <div className="flex justify-center pt-4">
                 <Button
-                  type="submit"
+                  type="button"
                   className="bg-primary text-white px-6 py-2 rounded-md"
+                  onClick={async () => {
+                    const errors = await formik.validateForm()
+                    if (Object.keys(errors).length === 0) {
+                      sendOTP()
+                    } else {
+                      formik.setTouched({
+                        firstName: true,
+                        lastName: true,
+                        organizationName: true,
+                        email: true,
+                      })
+                    }
+                  }}
                 >
                   Send OTP
                 </Button>
