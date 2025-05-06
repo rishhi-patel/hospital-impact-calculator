@@ -18,8 +18,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const baseUrl =
-      process.env.NEXT_PUBLIC_NETLIFY_ENVIRONMENT || "http://localhost:3000"
+    const baseUrl = "http://localhost:3000"
     const pdfPageUrl = `${baseUrl}/pdf-render?data=${encoded}`
 
     const isProd = process.env.NEXT_PUBLIC_VERCEL_ENVIRONMENT === "production"
