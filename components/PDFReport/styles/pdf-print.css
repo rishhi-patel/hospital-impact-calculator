@@ -1,8 +1,4 @@
 @media print {
-  main {
-    margin-top: 120px; /* equal to or slightly more than header height */
-    margin-bottom: 100px; /* equal to or slightly more than footer height */
-  }
   body {
     margin: 0;
   }
@@ -35,7 +31,7 @@
   }
 
   main {
-    margin-top: 100px; /* adjust based on header height */
+    margin-top: 50px; /* adjust based on header height */
     margin-bottom: 80px; /* adjust based on footer height */
   }
 }
