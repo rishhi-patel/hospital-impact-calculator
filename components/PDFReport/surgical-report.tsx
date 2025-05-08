@@ -56,9 +56,14 @@ export default function SurgicalReport({
       <header className="bg-magnet text-white p-4 print:fixed print:top-0 print:left-0 print:right-0">
         <div className="max-w-6xl mx-auto flex justify-between">
           <div></div>
-          <div className="text-right text-lg font-semibold">
-            <span className="font-bold">surgi</span>
-            <span className="font-light">twin</span>
+          <div className="text-right text-lg font-semibold mx-auto">
+            <div>
+              <img
+                src="/Surgitwin_Logo.png"
+                alt="SifioHealth Logo"
+                className="h-6"
+              />
+            </div>
           </div>
         </div>
       </header>
