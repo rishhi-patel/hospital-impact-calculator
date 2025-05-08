@@ -346,7 +346,10 @@ export default function SurgicalReport({
       {/* Fixed Footer */}
       <footer className="bg-magnet text-white p-1 print:fixed print:bottom-0 print:left-0 print:right-0">
         <div className="max-w-6xl mx-auto flex justify-between items-center text-sm">
-          <div className="font-semibold text-base">©sifio</div>
+          <div className="font-semibold text-base">©SifioHealth</div>
+          <div>
+            <img src="/logo.jpg" alt="SifioHealth Logo" className="h-6" />
+          </div>
           <div>www.sifiohealth.com</div>
         </div>
       </footer>
