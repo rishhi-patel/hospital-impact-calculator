@@ -49,7 +49,7 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
     value: number
     unit?: string
     title: string
-    subtitle: string
+    subtitle: React.ReactNode
     isCurrency?: boolean
   }) => (
     <div
@@ -75,15 +75,23 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
     </div>
   )
 
-  const projectedSubtitle = data.currentCases
-    ? `Efficiency gains could enable your department to perform an additional ${formatNumber(
-        data.projectedCases - data.currentCases
-      )} cases annually, increasing total volume from ${formatNumber(
-        data.currentCases
-      )} to ${formatNumber(data.projectedCases)} cases.`
-    : `Efficiency gains could enable your department to perform an additional ${formatNumber(
-        data.projectedCases
-      )} cases annually.`
+  const projectedSubtitle = data.currentCases ? (
+    <>
+      Efficiency gains could enable your department to perform an{" "}
+      <strong>
+        additional {formatNumber(data.projectedCases - data.currentCases)} cases
+        annually,
+      </strong>{" "}
+      increasing total volume from{" "}
+      <strong>{formatNumber(data.currentCases)}</strong> to{" "}
+      <strong>{formatNumber(data.projectedCases)} cases.</strong>
+    </>
+  ) : (
+    <>
+      Efficiency gains could enable your department to perform an additional{" "}
+      <strong>{formatNumber(data.projectedCases)} cases annually.</strong>
+    </>
+  )
 
   return (
     <motion.div
@@ -108,17 +116,29 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
             value={formatRoundedNumber(data.totalBlocks)}
             unit="blocks"
             title="Total Surgical Blocks Estimate"
-            subtitle={`Your department is estimated to require ${formatRoundedNumber(
-              data.totalBlocks
-            )} surgical blocks annually based on current services and case volume.`}
+            subtitle={
+              <>
+                Your department is estimated to require{" "}
+                <strong>
+                  {formatRoundedNumber(data.totalBlocks)} surgical blocks
+                </strong>{" "}
+                annually based on current services and case volume.
+              </>
+            }
           />
           <InfoBox
             value={data.potentialReduction}
             unit="blocks"
             title="Potential Block Reduction"
-            subtitle={`Improved efficiency could reduce block usage by approximately ${formatNumber(
-              data.potentialReduction
-            )} blocks per year, freeing up valuable OR time.`}
+            subtitle={
+              <>
+                Improved efficiency could reduce block usage by approximately{" "}
+                <strong>
+                  {formatNumber(data.potentialReduction)} blocks per year{" "}
+                </strong>
+                , freeing up valuable OR time.
+              </>
+            }
           />
           <InfoBox
             value={data.projectedCases - (data.currentCases ?? 0)}
@@ -129,9 +149,16 @@ export function PerformanceImpact({ data }: PerformanceImpactProps) {
           <InfoBox
             value={data.financialImpact}
             title="Financial Impact (Cost Savings or Revenue Uplift)"
-            subtitle={`Enhanced performance could generate an estimated ${formatRoundedCurrency(
-              data.financialImpact
-            )} in annual financial impact, through cost savings or increased surgical revenue.`}
+            subtitle={
+              <>
+                Enhanced performance could generate an estimated{" "}
+                <strong>
+                  {formatRoundedCurrency(data.financialImpact)} in annual
+                  financial impact,
+                </strong>{" "}
+                through cost savings or increased surgical revenue.
+              </>
+            }
             isCurrency
           />
         </div>
