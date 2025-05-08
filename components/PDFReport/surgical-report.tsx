@@ -65,7 +65,7 @@ export default function SurgicalReport({
 
       <main className="max-w-6xl mx-auto w-full px-6 py-8">
         <div className="flex justify-between items-center mb-6">
-          <div className="text-xl font-medium">Planning Report</div>
+          <div className="text-xl font-medium"></div>
           <div className="text-gray-500 text-sm">
             {new Date().toLocaleDateString("en-CA", {
               timeZone: "America/Toronto",
@@ -80,7 +80,7 @@ export default function SurgicalReport({
         <h2 className="text-center text-3xl font-bold text-magnet mb-4">
           Surgical Efficiency Opportunity Report
         </h2>
-        <p className="text-center text-gray-600 mx-auto">
+        <p className=" text-gray-600 mx-auto" style={{ fontSize: "12px" }}>
           Thank you for using the Sifio Health Efficiency Calculator. This
           report provides a tailored view of how your surgical department can
           unlock greater efficiency by addressing key operational levers. Based
@@ -89,6 +89,53 @@ export default function SurgicalReport({
           increase throughput, reduce wasted OR time, and boost financial
           performance.
         </p>
+
+        <section className="max-w-6xl mx-auto w-full  pt-8">
+          <h4 className="text-lg font-semibold text-magnet mb-6">
+            What Drives These Improvements?
+          </h4>
+
+          <h2 className="py-3">
+            Our analysis focuses on three critical drivers of surgical
+            efficiency:
+          </h2>
+          <div className="grid gap-4 text-sm" style={{ fontSize: "12px" }}>
+            <div className="">
+              <span className="w-48 text-magnet font-semibold">
+                1. Planning Accuracy
+              </span>
+              <span>
+                Improve alignment between scheduled and actual case durations.
+                By refining surgical time estimates and optimizing block
+                allocation, departments can reduce idle time, minimize delays,
+                and make full use of available OR capacity.
+              </span>
+            </div>
+            <div className="flex">
+              <span className="w-48 text-magnet font-semibold">
+                Flow Smoothing
+              </span>
+              <span>
+                Reduce variability across surgical days and teams. Even workload
+                distribution and improved case sequencing reduce bottlenecks,
+                improve staff morale, and increase the number of surgeries
+                performed per block.
+              </span>
+            </div>
+            <div className="flex">
+              <span className="w-48 text-magnet font-semibold">
+                Priority Planning
+              </span>
+              <span>
+                Schedule cases based on clinical and operational priority. Using
+                data-driven metrics such as urgency, complexity, and
+                contribution margin allows better decision-making on which cases
+                to schedule and when — improving both patient outcomes and
+                resource utilization.
+              </span>
+            </div>
+          </div>
+        </section>
 
         {/* Service-Specific Performance */}
         {departmentEntries.map(([key, department]) => {
@@ -106,11 +153,17 @@ export default function SurgicalReport({
                 </h3>
 
                 {/* Tables */}
-                <p className="text-sm text-gray-600 mb-2">
+                <p
+                  className="text-sm text-gray-600 mb-2"
+                  style={{ fontSize: "12px" }}
+                >
                   Overall Performance Comparison Table (Before SurgiTwin vs.
                   After SurgiTwin)
                 </p>
-                <table className="w-full mb-6 border rounded-md overflow-hidden text-sm">
+                <table
+                  className="w-full mb-6 border rounded-md overflow-hidden text-sm"
+                  style={{ fontSize: "12px" }}
+                >
                   <thead className="bg-gray-50 text-left">
                     <tr>
                       <th className="p-3 border-b">Metric</th>
@@ -161,7 +214,10 @@ export default function SurgicalReport({
                 <p className="text-sm text-gray-600 mb-2">
                   Breakdown of Efficiency Improvements Table
                 </p>
-                <table className="w-full mb-6 border rounded-md overflow-hidden text-sm">
+                <table
+                  className="w-full mb-6 border rounded-md overflow-hidden text-sm"
+                  style={{ fontSize: "12px" }}
+                >
                   <thead className="bg-gray-50 text-left">
                     <tr>
                       <th className="p-3 border-b">Category</th>
@@ -239,56 +295,16 @@ export default function SurgicalReport({
 
         {/* What Drives These Improvements */}
         <div className="no-break">
-          <section className="max-w-6xl mx-auto w-full px-6 pt-8">
-            <h4 className="text-lg font-semibold text-magnet mb-6">
-              What Drives These Improvements?
-            </h4>
-            <div className="grid gap-4 text-sm">
-              <div className="flex">
-                <span className="w-48 text-magnet font-semibold">
-                  Planning Accuracy
-                </span>
-                <span>
-                  Improve alignment between scheduled and actual case durations.
-                  By refining surgical time estimates and optimizing block
-                  allocation, departments can reduce idle time, minimize delays,
-                  and make full use of available OR capacity.
-                </span>
-              </div>
-              <div className="flex">
-                <span className="w-48 text-magnet font-semibold">
-                  Flow Smoothing
-                </span>
-                <span>
-                  Reduce variability across surgical days and teams. Even
-                  workload distribution and improved case sequencing reduce
-                  bottlenecks, improve staff morale, and increase the number of
-                  surgeries performed per block.
-                </span>
-              </div>
-              <div className="flex">
-                <span className="w-48 text-magnet font-semibold">
-                  Priority Planning
-                </span>
-                <span>
-                  Schedule cases based on clinical and operational priority.
-                  Using data-driven metrics such as urgency, complexity, and
-                  contribution margin allows better decision-making on which
-                  cases to schedule and when — improving both patient outcomes
-                  and resource utilization.
-                </span>
-              </div>
-            </div>
-          </section>
           {/* Next Steps */}
           <section className="max-w-6xl mx-auto w-full px-6 pt-12 pb-8 text-sm">
             <h4 className="text-lg font-semibold text-magnet mb-4">
               Next Steps: Unlock Your Department’s Full Potential
             </h4>
             <p className="mb-3">
-              These findings reflect just the starting point. With Surgitwin,
-              Sifio Health’s AI-powered surgical workflow platform, your team
-              can implement and sustain these improvements through:
+              These findings reflect just the starting point. With{" "}
+              <strong>Surgitwin</strong>, Sifio Health’s AI-powered surgical
+              workflow platform, your team can implement and sustain these
+              improvements through:
             </p>
             <ul className="list-disc ml-6 mb-4 space-y-1">
               <li>Accurate real-time surgical duration prediction</li>
@@ -312,7 +328,7 @@ export default function SurgicalReport({
               or connect with me directly.
             </p>
             <div className="mt-6">
-              <p className="font-semibold">Warm Regards,</p>
+              <p className="">Warm Regards,</p>
               <p>JP Eskander, CEO</p>
               <p className="text-magnet">jp.eskander@sifiohealth.com</p>
             </div>

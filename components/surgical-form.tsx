@@ -47,7 +47,7 @@ export function SurgicalForm({
     { id: "Gynaecologic", name: "Gynaecologic" },
     { id: "Neurosurgery", name: "Neurosurgery" },
     { id: "Ophthalmic", name: "Ophthalmology" },
-    { id: "Orthopaedic", name: "Ophthalmology" },
+    { id: "Orthopaedic", name: "Orthopaedic" },
     {
       id: "Oral_and_Maxillofacial_and_Dentistry",
       name: "Oral and Maxillofacial and Dentistry",
@@ -159,8 +159,9 @@ export function SurgicalForm({
     <Card className="p-6 shadow-sm border rounded-lg">
       <form onSubmit={formik.handleSubmit}>
         <div className="space-y-8">
+          <p className="font-bold text-sm">1. Type of Surgical Department</p>
           <div className="grid md:grid-cols-2 gap-6 items-start">
-            <Label className="font-semibold">
+            <Label className="">
               Select the type of healthcare facility where surgeries are
               performed:
             </Label>
@@ -343,7 +344,7 @@ export function SurgicalForm({
 
           <div className="grid md:grid-cols-2 gap-6 items-start">
             <Label className="font-semibold">
-              what benchmark would you like to compare it to?
+              What benchmark would you like to compare it to?
             </Label>
             <div>
               <Select
