@@ -159,6 +159,9 @@ export function EmailVerification() {
       transition={{ duration: 0.5 }}
     >
       <div className="p-6 rounded-lg mb-6 text-center">
+        <h2 className="text-2xl font-bold text-gray-900">
+          Get Your Customized Report
+        </h2>
         <p className="text-gray-700 mt-4">
           Enter your email to receive a detailed breakdown of your department’s
           performance potential, including key areas of improvement:{" "}

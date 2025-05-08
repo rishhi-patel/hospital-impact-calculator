@@ -53,7 +53,7 @@ export default function SurgicalReport({
   return (
     <div className="bg-white text-black" id="final-report">
       {/* Fixed Header */}
-      <header className="bg-magnet text-white p-4 print:fixed print:top-0 print:left-0 print:right-0">
+      <header className="bg-magnet text-white p-1 print:fixed print:top-0 print:left-0 print:right-0">
         <div className="max-w-6xl mx-auto flex justify-between">
           <div></div>
           <div className="text-right text-lg font-semibold">
@@ -63,9 +63,9 @@ export default function SurgicalReport({
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto w-full px-6 py-8">
+      <main className="max-w-6xl mx-auto w-full px-6 py-6">
         <div className="flex justify-between items-center mb-6">
-          <div className="text-xl font-medium">Planning Report</div>
+          <div className="text-xl font-medium"></div>
           <div className="text-gray-500 text-sm">
             {new Date().toLocaleDateString("en-CA", {
               timeZone: "America/Toronto",
@@ -77,10 +77,13 @@ export default function SurgicalReport({
           </div>
         </div>
 
-        <h2 className="text-center text-3xl font-bold text-magnet mb-4">
+        <h2
+          className="text-center text-3xl font-bold text-magnet mb-2"
+          style={{ fontSize: "18px" }}
+        >
           Surgical Efficiency Opportunity Report
         </h2>
-        <p className="text-center text-gray-600 mx-auto">
+        <p className=" text-gray-600 mx-auto" style={{ fontSize: "12px" }}>
           Thank you for using the Sifio Health Efficiency Calculator. This
           report provides a tailored view of how your surgical department can
           unlock greater efficiency by addressing key operational levers. Based
@@ -89,6 +92,54 @@ export default function SurgicalReport({
           increase throughput, reduce wasted OR time, and boost financial
           performance.
         </p>
+
+        <section className="max-w-6xl mx-auto w-full  pt-4">
+          <h4
+            className="text-lg font-semibold text-magnet mb-1"
+            style={{ fontSize: "14px" }}
+          >
+            What Drives These Improvements?
+          </h4>
+
+          <h2 className="py-1" style={{ fontSize: "12px" }}>
+            Our analysis focuses on three critical drivers of surgical
+            efficiency:
+          </h2>
+          <div className="grid gap-4 text-sm" style={{ fontSize: "12px" }}>
+            <div className="">
+              <h3 className="w-48 text-magnet font-semibold">
+                Planning Accuracy
+              </h3>
+              <p>
+                Improve alignment between scheduled and actual case durations.
+                By refining surgical time estimates and optimizing block
+                allocation, departments can reduce idle time, minimize delays,
+                and make full use of available OR capacity.
+              </p>
+            </div>
+            <div className="">
+              <h3 className="w-48 text-magnet font-semibold">Flow Smoothing</h3>
+              <span>
+                Reduce variability across surgical days and teams. Even workload
+                distribution and improved case sequencing reduce bottlenecks,
+                improve staff morale, and increase the number of surgeries
+                performed per block.
+              </span>
+            </div>
+            <div className="">
+              <h3 className="w-48 text-magnet font-semibold">
+                Priority Planning
+              </h3>
+              <span>
+                Schedule cases based on clinical and operational priority. Using
+                data-driven metrics such as urgency, complexity, and
+                contribution margin allows better decision-making on which cases
+                to schedule and when — improving both patient outcomes and
+                resource utilization.
+              </span>
+            </div>
+          </div>
+        </section>
 
         {/* Service-Specific Performance */}
         {departmentEntries.map(([key, department]) => {
@@ -99,40 +150,49 @@ export default function SurgicalReport({
           const totalCost = department.potentialCostSaved
 
           return (
-            <div key={key} className="pt-16">
-              <div className="bg-white border rounded-xl p-6 mb-12 shadow-sm no-break">
-                <h3 className="text-lg font-semibold mb-4">
+            <div key={key} className="pt-9">
+              <div className="bg-white border rounded-xl p-2  shadow-sm no-break">
+                <h3
+                  className="text-lg font-semibold mb-2"
+                  style={{ fontSize: "14px" }}
+                >
                   {serviceCategories[typedKey]} Surgery Department
                 </h3>
 
                 {/* Tables */}
-                <p className="text-sm text-gray-600 mb-2">
+                <p
+                  className="text-sm text-gray-600 mb-2"
+                  style={{ fontSize: "12px" }}
+                >
                   Overall Performance Comparison Table (Before SurgiTwin vs.
                   After SurgiTwin)
                 </p>
-                <table className="w-full mb-6 border rounded-md overflow-hidden text-sm">
+                <table
+                  className="w-full mb-6 border rounded-md overflow-hidden text-sm"
+                  style={{ fontSize: "12px" }}
+                >
                   <thead className="bg-gray-50 text-left">
                     <tr>
-                      <th className="p-3 border-b">Metric</th>
-                      <th className="p-3 border-b text-center">
+                      <th className="p-1 border-b">Metric</th>
+                      <th className="p-1 border-b text-center">
                         Current Performance
                       </th>
-                      <th className="p-3 border-b text-center">
+                      <th className="p-1 border-b text-center">
                         Optimized Performance
                       </th>
-                      <th className="p-3 border-b text-center"></th>
+                      <th className="p-1 border-b text-center"></th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
-                      <td className="p-3 border-b">Case Volume</td>
-                      <td className="p-3 border-b text-center">
+                      <td className="p-1 border-b">Case Volume</td>
+                      <td className="p-1 border-b text-center">
                         {formatNumber(department.caseVolume)}
                       </td>
-                      <td className="p-3 border-b text-center">
+                      <td className="p-1 border-b text-center">
                         {formatNumber(department.potentialCaseVolume)}
                       </td>
-                      <td className="p-3 border-b text-center">
+                      <td className="p-1 border-b text-center">
                         <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-magnet-faint text-magnet">
                           <ArrowUpIcon className="w-3 h-3 mr-1" />+
                           {formatNumber(totalSurgeries)} cases
@@ -140,14 +200,14 @@ export default function SurgicalReport({
                       </td>
                     </tr>
                     <tr>
-                      <td className="p-3">Estimated Blocks Used</td>
-                      <td className="p-3 text-center">
+                      <td className="p-1">Estimated Blocks Used</td>
+                      <td className="p-1 text-center">
                         {formatNumber(department.blocks)}
                       </td>
-                      <td className="p-3 text-center">
+                      <td className="p-1 text-center">
                         {formatNumber(department.potentialBlocks)}
                       </td>
-                      <td className="p-3 text-center">
+                      <td className="p-1 text-center">
                         <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-magnet-faint text-magnet">
                           <ArrowDownIcon className="w-3 h-3 mr-1" />-
                           {formatNumber(totalBlocks)} blocks
@@ -161,30 +221,33 @@ export default function SurgicalReport({
                 <p className="text-sm text-gray-600 mb-2">
                   Breakdown of Efficiency Improvements Table
                 </p>
-                <table className="w-full mb-6 border rounded-md overflow-hidden text-sm">
+                <table
+                  className="w-full mb-6 border rounded-md overflow-hidden text-sm"
+                  style={{ fontSize: "12px" }}
+                >
                   <thead className="bg-gray-50 text-left">
                     <tr>
-                      <th className="p-3 border-b">Category</th>
-                      <th className="p-3 border-b text-center">
+                      <th className="p-1 border-b">Category</th>
+                      <th className="p-1 border-b text-center">
                         Additional Surgeries Performed
                       </th>
-                      <th className="p-3 border-b text-center">
+                      <th className="p-1 border-b text-center">
                         Freed-Up Blocks
                       </th>
-                      <th className="p-3 border-b text-center"></th>
+                      <th className="p-1 border-b text-center"></th>
                     </tr>
                   </thead>
                   <tbody>
                     {department.potentialByBucket.map((bucket) => (
                       <tr key={bucket.bucketName}>
-                        <td className="p-3 border-b">{bucket.bucketName}</td>
-                        <td className="p-3 border-b text-center">
+                        <td className="p-1 border-b">{bucket.bucketName}</td>
+                        <td className="p-1 border-b text-center">
                           +{formatNumber(bucket.volumeIncreased)} Cases
                         </td>
-                        <td className="p-3 border-b text-center">
+                        <td className="p-1 border-b text-center">
                           {formatNumber(bucket.blocksReduced)} Blocks
                         </td>
-                        <td className="p-3 border-b text-center">
+                        <td className="p-1 border-b text-center">
                           <span className="inline-flex items-center px-2 py-1 rounded-full text-sm bg-magnet-faint text-magnet">
                             <ArrowUpIcon className="w-3 h-3 mr-1" />
                             {formatCurrency(bucket.costSaved)} saved
@@ -196,7 +259,7 @@ export default function SurgicalReport({
                 </table>
 
                 {/* Summary */}
-                <div className="bg-magnet-faint rounded-xl px-6 py-6 shadow-sm flex items-center justify-between text-magnet mt-4">
+                <div className="bg-magnet-faint rounded-xl px-6 py-2 shadow-sm flex items-center justify-between text-magnet mt-2">
                   <div className="text-sm font-semibold">
                     Total {serviceCategories[typedKey]} Surgery Performance
                     Impact
@@ -239,58 +302,18 @@ export default function SurgicalReport({
 
         {/* What Drives These Improvements */}
         <div className="no-break">
-          <section className="max-w-6xl mx-auto w-full px-6 pt-8">
-            <h4 className="text-lg font-semibold text-magnet mb-6">
-              What Drives These Improvements?
-            </h4>
-            <div className="grid gap-4 text-sm">
-              <div className="flex">
-                <span className="w-48 text-magnet font-semibold">
-                  Planning Accuracy
-                </span>
-                <span>
-                  Improve alignment between scheduled and actual case durations.
-                  By refining surgical time estimates and optimizing block
-                  allocation, departments can reduce idle time, minimize delays,
-                  and make full use of available OR capacity.
-                </span>
-              </div>
-              <div className="flex">
-                <span className="w-48 text-magnet font-semibold">
-                  Flow Smoothing
-                </span>
-                <span>
-                  Reduce variability across surgical days and teams. Even
-                  workload distribution and improved case sequencing reduce
-                  bottlenecks, improve staff morale, and increase the number of
-                  surgeries performed per block.
-                </span>
-              </div>
-              <div className="flex">
-                <span className="w-48 text-magnet font-semibold">
-                  Priority Planning
-                </span>
-                <span>
-                  Schedule cases based on clinical and operational priority.
-                  Using data-driven metrics such as urgency, complexity, and
-                  contribution margin allows better decision-making on which
-                  cases to schedule and when — improving both patient outcomes
-                  and resource utilization.
-                </span>
-              </div>
-            </div>
-          </section>
           {/* Next Steps */}
-          <section className="max-w-6xl mx-auto w-full px-6 pt-12 pb-8 text-sm">
-            <h4 className="text-lg font-semibold text-magnet mb-4">
+          <section className="max-w-6xl mx-auto w-full px-6 pt-9 pb-8 text-sm">
+            <h4 className="text-lg font-semibold text-magnet mb-2">
               Next Steps: Unlock Your Department’s Full Potential
             </h4>
             <p className="mb-3">
-              These findings reflect just the starting point. With Surgitwin,
-              Sifio Health’s AI-powered surgical workflow platform, your team
-              can implement and sustain these improvements through:
+              These findings reflect just the starting point. With{" "}
+              <strong>Surgitwin</strong>, Sifio Health’s AI-powered surgical
+              workflow platform, your team can implement and sustain these
+              improvements through:
             </p>
-            <ul className="list-disc ml-6 mb-4 space-y-1">
+            <ul className="list-disc ml-6 mb-2 space-y-1">
               <li>Accurate real-time surgical duration prediction</li>
               <li>Dynamic resource and staff planning</li>
               <li>
@@ -311,8 +334,8 @@ export default function SurgicalReport({
               </a>{" "}
               or connect with me directly.
             </p>
-            <div className="mt-6">
-              <p className="font-semibold">Warm Regards,</p>
+            <div className="mt-3">
+              <p className="">Warm Regards,</p>
               <p>JP Eskander, CEO</p>
               <p className="text-magnet">jp.eskander@sifiohealth.com</p>
             </div>
@@ -321,9 +344,12 @@ export default function SurgicalReport({
       </main>
 
       {/* Fixed Footer */}
-      <footer className="bg-magnet text-white p-4 print:fixed print:bottom-0 print:left-0 print:right-0">
+      <footer className="bg-magnet text-white p-1 print:fixed print:bottom-0 print:left-0 print:right-0">
         <div className="max-w-6xl mx-auto flex justify-between items-center text-sm">
-          <div className="font-semibold text-base">©sifio</div>
+          <div className="font-semibold text-base">©SifioHealth</div>
+          <div>
+            <img src="/logo.jpg" alt="SifioHealth Logo" className="h-6" />
+          </div>
           <div>www.sifiohealth.com</div>
         </div>
       </footer>

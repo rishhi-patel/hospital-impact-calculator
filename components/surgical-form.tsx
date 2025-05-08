@@ -47,7 +47,7 @@ export function SurgicalForm({
     { id: "Gynaecologic", name: "Gynaecologic" },
     { id: "Neurosurgery", name: "Neurosurgery" },
     { id: "Ophthalmic", name: "Ophthalmology" },
-    { id: "Orthopaedic", name: "Ophthalmology" },
+    { id: "Orthopaedic", name: "Orthopaedic" },
     {
       id: "Oral_and_Maxillofacial_and_Dentistry",
       name: "Oral and Maxillofacial and Dentistry",
@@ -159,37 +159,43 @@ export function SurgicalForm({
     <Card className="p-6 shadow-sm border rounded-lg">
       <form onSubmit={formik.handleSubmit}>
         <div className="space-y-8">
-          <div className="grid md:grid-cols-2 gap-6 items-start">
-            <Label className="font-semibold">
-              Select the type of healthcare facility where surgeries are
-              performed:
-            </Label>
-            <div>
-              <Select
-                value={formik.values.departmentType}
-                onValueChange={(value) =>
-                  formik.setFieldValue("departmentType", value)
-                }
-              >
-                <SelectTrigger id="departmentType">
-                  <SelectValue placeholder="Select department type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Community">Community</SelectItem>
-                  <SelectItem value="Academic">Academic</SelectItem>
-                </SelectContent>
-              </Select>
-              {formik.touched.departmentType &&
-                formik.errors.departmentType && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {formik.errors.departmentType}
-                  </p>
-                )}
+          <div className="space-y-4">
+            <p className="font-bold text-lg">1. Type of Surgical Department</p>
+            <div className="grid md:grid-cols-2 gap-6 items-start">
+              <Label className="text-sm text-gray-700">
+                Select the type of healthcare facility where surgeries are
+                performed:
+              </Label>
+              <div>
+                <Select
+                  value={formik.values.departmentType}
+                  onValueChange={(value) =>
+                    formik.setFieldValue("departmentType", value)
+                  }
+                >
+                  <SelectTrigger id="departmentType" className="w-full">
+                    <SelectValue placeholder="Select department type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Community">Community</SelectItem>
+                    <SelectItem value="Academic">Academic</SelectItem>
+                  </SelectContent>
+                </Select>
+                {formik.touched.departmentType &&
+                  formik.errors.departmentType && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {formik.errors.departmentType}
+                    </p>
+                  )}
+              </div>
             </div>
           </div>
 
+          <p className="font-bold text-lg">
+            2. Standard Surgical Block Duration
+          </p>
           <div className="grid md:grid-cols-2 gap-6 items-start">
-            <Label className="font-semibold">
+            <Label className="text-sm text-gray-700">
               Select the typical scheduled time for a full OR block in minutes:
             </Label>
             <div>
@@ -216,8 +222,9 @@ export function SurgicalForm({
             </div>
           </div>
 
+          <p className="font-bold text-lg">3. Surgical Services Offered</p>
           <div>
-            <Label className="font-semibold mb-2 block">
+            <Label className="text-sm text-gray-700">
               Select all surgical specialties supported by the department:
             </Label>
             <div className="flex flex-wrap gap-2">
@@ -248,38 +255,45 @@ export function SurgicalForm({
 
           {selectedServices.length > 0 && (
             <div className="space-y-4">
+              <p className="font-bold text-lg">
+                4. Annual Surgical Case Volume
+              </p>
               {selectedServices.map((id) => {
                 const service =
                   serviceCategories.find((s) => s.id === id)?.name || id
                 return (
-                  <div
-                    key={id}
-                    className="grid md:grid-cols-2 gap-6 items-start"
-                  >
-                    <Label className="font-semibold">
-                      Enter the total number of surgical cases performed per
-                      year for {service} :
-                    </Label>
-                    <Input
-                      type="number"
-                      min={1}
-                      value={caseVolumes[id]}
-                      onChange={(e) =>
-                        handleCaseVolumeChange(
-                          id,
-                          parseInt(e.target.value, 10) || 0
-                        )
-                      }
-                      placeholder="Enter number of cases"
-                    />
-                  </div>
+                  <>
+                    <div
+                      key={id}
+                      className="grid md:grid-cols-2 gap-6 items-start"
+                    >
+                      <Label className="text-sm text-gray-700">
+                        Enter the total number of surgical cases performed per
+                        year for {service} :
+                      </Label>
+                      <Input
+                        type="number"
+                        min={1}
+                        value={caseVolumes[id]}
+                        onChange={(e) =>
+                          handleCaseVolumeChange(
+                            id,
+                            parseInt(e.target.value, 10) || 0
+                          )
+                        }
+                        placeholder="Enter number of cases"
+                      />
+                    </div>{" "}
+                  </>
                 )
               })}
             </div>
           )}
-
+          <p className="font-bold text-lg">
+            5. Financial Value per OR Block Minute
+          </p>
           <div className="grid md:grid-cols-2 gap-6 items-start">
-            <Label className="font-semibold">
+            <Label className="text-sm text-gray-700">
               Select the average cost savings or revenue generated per minute of
               OR time:
             </Label>
@@ -307,8 +321,11 @@ export function SurgicalForm({
             </div>
           </div>
 
+          <p className="font-bold text-lg">
+            6. Current and Targeted Department Performance
+          </p>
           <div className="grid md:grid-cols-2 gap-6 items-start">
-            <Label className="font-semibold">
+            <Label className="text-sm text-gray-700">
               How does the department currently perform?
             </Label>
             <div>
@@ -324,7 +341,7 @@ export function SurgicalForm({
                 </SelectTrigger>
                 <SelectContent>
                   {Object.entries(performanceLevels)
-                    .filter(([_, label]) => label !== "Best")
+                    .filter(([label]) => label !== "Best")
                     .map(([value, label]) => (
                       <SelectItem key={value} value={value}>
                         {label}
@@ -342,8 +359,8 @@ export function SurgicalForm({
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 items-start">
-            <Label className="font-semibold">
-              what benchmark would you like to compare it to?
+            <Label className="text-sm text-gray-700">
+              What benchmark would you like to compare it to?
             </Label>
             <div>
               <Select
