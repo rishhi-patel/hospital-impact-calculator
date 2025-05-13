@@ -94,10 +94,6 @@ Or add this `<script>` inside a post/page:
 ></script>
 ```
 
-## 🔑 Environment Variables
-
-## For the application to work properly in production, make sure to set the following environment variables:
-
 ## 🧾 Final Integration Guide
 
 This document outlines how to manage and update core features of the **Hospital Impact Calculator**, including:
