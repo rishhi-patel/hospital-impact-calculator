@@ -126,7 +126,13 @@ export function EmailVerification() {
 
       setIsGeneratingReport(true)
 
-      await fetch("https://puppeter-test-pearl.vercel.app/api/contact", {
+      const pdfHubspotUrl = process.env.NEXT_PUBLIC_PDF_HUBSPOT_URL
+      if (!pdfHubspotUrl) {
+        throw new Error(
+          "PDF Hubspot URL is not defined in environment variables."
+        )
+      }
+      await fetch(pdfHubspotUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

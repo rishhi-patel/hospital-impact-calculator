@@ -1,0 +1,14 @@
+{
+  "lambdaLayers": [],
+  "environmentVariableList": [
+    {
+      "cloudFormationParameterName": "hubspotApiKey",
+      "environmentVariableName": "HUBSPOT_API_KEY"
+    },
+    {
+      "cloudFormationParameterName": "appUrl",
+      "environmentVariableName": "APP_URL"
+    }
+  ],
+  "permissions": {}
+}
