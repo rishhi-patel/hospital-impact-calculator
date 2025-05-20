@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { ChevronDown, ChevronUp, Download } from "lucide-react"
 import { motion } from "framer-motion"
 import Chip from "./ui/Chip"
-import { downloadPDF } from "../lib/pdfUtils"
+// import { downloadPDF } from "../lib/pdfUtils"
 
 const PDFGenerator = async (id: string) => {
   const { generatePDF } = await import("../lib/pdfUtils")
@@ -66,11 +66,11 @@ export function DetailedReport({ departmentDetails }: DetailedReportProps) {
     }).format(num)
   }
 
-  const handleDownload = () => {
-    // Generate PDF from the element with the given ID
-    downloadPDF(localStorage.getItem("encoded") || "")
-    // PDFGenerator("pdf-report")
-  }
+  // const handleDownload = () => {
+  //   // Generate PDF from the element with the given ID
+  //   downloadPDF(localStorage.getItem("encoded") || "")
+  //   // PDFGenerator("pdf-report")
+  // }
 
   return (
     <motion.div
@@ -243,7 +243,7 @@ export function DetailedReport({ departmentDetails }: DetailedReportProps) {
           })}
         </div>
 
-        <div className="flex justify-center mt-8">
+        {/* <div className="flex justify-center mt-8">
           <Button
             onClick={handleDownload}
             className="bg-primary hover:bg-primary/90 text-white flex items-center gap-2"
@@ -251,7 +251,7 @@ export function DetailedReport({ departmentDetails }: DetailedReportProps) {
             <Download size={16} />
             DOWNLOAD REPORT
           </Button>
-        </div>
+        </div> */}
       </Card>
     </motion.div>
   )
