@@ -126,13 +126,7 @@ export function EmailVerification() {
 
       setIsGeneratingReport(true)
 
-      const pdfHubspotUrl = process.env.NEXT_PUBLIC_PDF_HUBSPOT_URL
-      if (!pdfHubspotUrl) {
-        throw new Error(
-          "PDF Hubspot URL is not defined in environment variables."
-        )
-      }
-      await fetch(pdfHubspotUrl, {
+      await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
