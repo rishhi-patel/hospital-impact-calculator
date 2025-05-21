@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { authenticator } from "otplib"
-import { sendOTPEmail } from "@/lib/sendgrid"
+// import { sendOTPEmail } from "@/lib/sendgrid"
 
 const OTP_SECRET = process.env.OTP_SECRET || "your-secure-secret-key"
 
@@ -21,14 +21,14 @@ export async function POST(request: Request) {
     const otp = authenticator.generate(userSecret)
 
     // Send OTP email here
-    const emailSent = await sendOTPEmail(email, otp)
+    // const emailSent = await sendOTPEmail(email, otp)
 
-    if (!emailSent) {
-      return NextResponse.json(
-        { success: false, message: "Failed to send verification code" },
-        { status: 500 }
-      )
-    }
+    // For development/testing: send OTP in response instead of email
+    return NextResponse.json({
+      success: true,
+      message: "Verification code sent successfully",
+      otp,
+    })
 
     return NextResponse.json({
       success: true,
