@@ -1,54 +1,87 @@
 import { NextRequest, NextResponse } from "next/server"
+import puppeteerCore from "puppeteer-core"
+import puppeteer from "puppeteer"
+import chromium from "@sparticuz/chromium-min"
 import FormData from "form-data"
 import fetch from "node-fetch"
 import { Readable } from "stream"
 
-// Fetch all contacts
-export async function GET() {
-  try {
-    const response = await fetch(
-      "https://api.hubapi.com/contacts/v1/lists/all/contacts/all",
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${process.env.HUBSPOT_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-      }
-    )
+const remoteExecutablePath =
+  "https://github.com/Sparticuz/chromium/releases/download/v133.0.0/chromium-v133.0.0-pack.tar"
 
-    if (!response.ok) {
-      const errorData = await response.json()
-      throw new Error(
-        (errorData as { message?: string }).message ||
-          "Failed to fetch contacts from HubSpot"
+export async function POST(req: NextRequest) {
+  try {
+    const { email, firstName, lastName, organizationName, encoded, source } =
+      await req.json()
+
+    if (!email || !encoded) {
+      return NextResponse.json(
+        { message: "Missing email or encoded data" },
+        { status: 400 }
       )
     }
 
-    const data = await response.json()
-    return NextResponse.json(data, { status: 200 })
-  } catch (error: any) {
-    console.error("API proxy error:", error)
-    return NextResponse.json(
-      { message: error.message || "Internal Server Error" },
-      { status: 500 }
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+    const pdfPageUrl = `${baseUrl}/pdf-render?data=${encoded}`
+
+    const isProd = process.env.NEXT_PUBLIC_VERCEL_ENVIRONMENT === "production"
+
+    const browser = await (isProd
+      ? puppeteerCore.launch({
+          args: chromium.args,
+          executablePath: await chromium.executablePath(remoteExecutablePath),
+          headless: chromium.headless,
+        })
+      : puppeteer.launch({
+          args: ["--no-sandbox", "--disable-setuid-sandbox"],
+          headless: true,
+        }))
+
+    const page = await browser.newPage()
+    await page.goto(pdfPageUrl, { waitUntil: "domcontentloaded" })
+    await page.waitForSelector("#final-report", { timeout: 8000 })
+
+    const pdfBuffer = await page.pdf({
+      format: "A4",
+      printBackground: true,
+    })
+
+    await browser.close()
+
+    // Upload to HubSpot
+    const form = new FormData()
+    const stream = new Readable()
+    stream.push(pdfBuffer)
+    stream.push(null)
+
+    form.append("file", stream, {
+      filename: `${email}_report.pdf`,
+      contentType: "application/pdf",
+    })
+    form.append("options", JSON.stringify({ access: "PUBLIC_INDEXABLE" }))
+    form.append("folderPath", "/reports")
+
+    const uploadResponse = await fetch(
+      "https://api.hubapi.com/files/v3/files",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.HUBSPOT_API_KEY}`,
+          ...form.getHeaders(),
+        },
+        body: form,
+      }
     )
-  }
-}
 
-export async function POST(req: NextRequest) {
-  const { email, firstName, lastName, organizationName, encoded, source } =
-    await req.json()
+    if (!uploadResponse.ok) {
+      const errorText = await uploadResponse.text()
+      throw new Error("Upload failed: " + errorText)
+    }
 
-  if (!email) {
-    return NextResponse.json(
-      { message: "Missing email parameter" },
-      { status: 400 }
-    )
-  }
+    const result = (await uploadResponse.json()) as { url?: string }
+    const publicUrl = result.url || `${baseUrl}/pdf-render?data=${encoded}`
 
-  try {
-    // Check if the contact exists in HubSpot using email
+    // Search contact by email
     const searchResponse = await fetch(
       `https://api.hubapi.com/contacts/v1/search/query?q=${email}`,
       {
@@ -64,77 +97,15 @@ export async function POST(req: NextRequest) {
       const errorData = await searchResponse.json()
       throw new Error(
         (errorData as { message?: string }).message ||
-          "Failed to search contact in HubSpot"
+          "Failed to search contact"
       )
     }
 
     const searchData = (await searchResponse.json()) as {
       total: number
-      contacts: { vid: string }[]
+      contacts: { vid: number }[]
     }
-    let contactId = null
-
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
-    const pdfPageUrl = `${baseUrl}/pdf-render?data=${encoded}`
-
-    // Fetch PDF buffer from external endpoint
-    const pdfResponse = await fetch(
-      "https://puppeter-test-pearl.vercel.app/api/web-to-pdf",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ encoded }),
-      }
-    )
-
-    if (!pdfResponse.ok) {
-      const errorText = await pdfResponse.text()
-      throw new Error("Failed to generate PDF: " + errorText)
-    }
-
-    const pdfBuffer = await pdfResponse.buffer()
-
-    // ✅ Upload to HubSpot using buffer
-    const form = new FormData()
-    const stream = new Readable()
-    stream.push(pdfBuffer)
-    stream.push(null)
-
-    form.append("file", stream, {
-      filename: `${email}_report.pdf`,
-      contentType: "application/pdf",
-    })
-    form.append("options", JSON.stringify({ access: "PUBLIC_INDEXABLE" }))
-    form.append("folderPath", "/reports") // optional; adjust as needed
-
-    const uploadResponse = await fetch(
-      "https://api.hubapi.com/files/v3/files",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${process.env.HUBSPOT_API_KEY}`,
-          ...form.getHeaders(), // IMPORTANT: sets correct multipart boundaries
-        },
-        body: form,
-      }
-    )
-
-    if (!uploadResponse.ok) {
-      const errorText = await uploadResponse.text()
-      throw new Error("Upload failed: " + errorText)
-    }
-
-    const result = (await uploadResponse.json()) as {
-      url?: string
-      fileUrl?: string
-    }
-    console.log("✅ Uploaded file URL:", result.url || result.fileUrl)
-
-    const publicUrl =
-      result.url ||
-      `${process.env.NEXT_PUBLIC_APP_URL}/pdf-render?data=${encoded}`
+    const contactId = searchData.total > 0 ? searchData.contacts[0].vid : null
 
     const properties = [
       { property: "email", value: email },
@@ -143,66 +114,38 @@ export async function POST(req: NextRequest) {
       { property: "company", value: organizationName },
       { property: "contact_source", value: source },
       { property: "report_status", value: "Pending" },
-      {
-        property: "report_preview_link",
-        value: publicUrl,
-      },
+      { property: "report_preview_link", value: publicUrl },
     ]
 
-    if (searchData.total > 0) {
-      // Update existing contact
-      contactId = searchData.contacts[0].vid
+    const hubspotUrl = contactId
+      ? `https://api.hubapi.com/contacts/v1/contact/vid/${contactId}/profile`
+      : "https://api.hubapi.com/contacts/v1/contact"
 
-      const updateResponse = await fetch(
-        `https://api.hubapi.com/contacts/v1/contact/vid/${contactId}/profile`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${process.env.HUBSPOT_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ properties }),
-        }
+    const hubspotMethod = contactId ? "POST" : "POST"
+    const body = contactId ? { properties } : { properties }
+
+    const saveContact = await fetch(hubspotUrl, {
+      method: hubspotMethod,
+      headers: {
+        Authorization: `Bearer ${process.env.HUBSPOT_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    })
+
+    if (!saveContact.ok) {
+      const errorData = await saveContact.json()
+      throw new Error(
+        (errorData as { message?: string }).message || "Failed to save contact"
       )
-
-      if (!updateResponse.ok) {
-        const errorData = await updateResponse.json()
-        throw new Error(
-          (errorData as { message?: string }).message ||
-            "Failed to update contact"
-        )
-      }
-
-      const updatedContact =
-        updateResponse.status === 204 ? {} : await updateResponse.json()
-      return NextResponse.json(updatedContact, { status: 200 })
-    } else {
-      // Create new contact
-      const createResponse = await fetch(
-        "https://api.hubapi.com/contacts/v1/contact",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${process.env.HUBSPOT_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ properties }),
-        }
-      )
-
-      if (!createResponse.ok) {
-        const errorData = await createResponse.json()
-        throw new Error(
-          (errorData as { message?: string }).message ||
-            "Failed to create contact"
-        )
-      }
-
-      const newContact = await createResponse.json()
-      return NextResponse.json(newContact, { status: 200 })
     }
+
+    const savedContact =
+      saveContact.status === 204 ? {} : await saveContact.json()
+
+    return NextResponse.json({ success: true, savedContact }, { status: 200 })
   } catch (error: any) {
-    console.error("API proxy error:", error)
+    console.error("web-to-pdf + hubspot error:", error)
     return NextResponse.json(
       { message: error.message || "Internal Server Error" },
       { status: 500 }

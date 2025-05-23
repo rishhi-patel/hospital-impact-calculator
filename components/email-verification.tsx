@@ -126,7 +126,7 @@ export function EmailVerification() {
 
       setIsGeneratingReport(true)
 
-      await fetch("https://puppeter-test-pearl.vercel.app/api/contact", {
+      await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

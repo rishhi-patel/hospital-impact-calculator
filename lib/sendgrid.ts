@@ -1,10 +1,15 @@
 import { Resend } from "resend"
 
-const resendApiKey = process.env.RESEND_API_KEY
-if (!resendApiKey)
-  throw new Error("RESEND_API_KEY is not defined in the environment")
-
-const resend = new Resend(resendApiKey)
+let _resendClient: Resend | null = null
+function getResendClient(): Resend {
+  if (!_resendClient) {
+    const key = process.env.RESEND_API_KEY
+    if (!key)
+      throw new Error("RESEND_API_KEY is not defined in the environment")
+    _resendClient = new Resend(key)
+  }
+  return _resendClient
+}
 
 // Generate a 6-digit OTP
 export function generateOTP(): string {
@@ -19,7 +24,7 @@ function getEmailHTML(
 ): string {
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;">
-      <h2 style="color: #2C6150; text-align: center;">Sifio Health</h2>
+      <h2 style="color: #2C6150; text-align: center;">${title}</h2>
       ${body}
       <p>Best regards,</p>
       <p>Sifio Health Team</p>
@@ -37,7 +42,7 @@ export async function sendOTPEmail(
   otp: string
 ): Promise<boolean> {
   const htmlBody = getEmailHTML(
-    "Sifio Health",
+    "Sifio Health Verification",
     `
       <p>Dear User,</p>
       <p>Thank you for using the Surgical Performance Estimator. Use the following code to complete verification:</p>
@@ -60,14 +65,13 @@ export async function sendOTPEmail(
 export async function sendDetailedReportEmail(
   email: string,
   buffer: Buffer,
-  fileName: string,
-  mimeType: string
+  fileName: string
 ): Promise<boolean> {
   try {
     const base64 = buffer.toString("base64")
 
     const htmlBody = getEmailHTML(
-      "Sifio Health",
+      "Sifio Health Detailed Report",
       `
       <p>Dear User,</p>
       <p>Thank you for using the Surgical Performance Estimator. Please find your detailed report attached to this email.</p>
@@ -76,7 +80,7 @@ export async function sendDetailedReportEmail(
       `This email was sent to ${email}. For queries, contact info@sifiohealth.com.`
     )
 
-    const { error } = await resend.emails.send({
+    const { error } = await getResendClient().emails.send({
       from: "noreply@sifiohealth.com",
       to: email,
       subject: "Your Detailed Report - Sifio Health",
@@ -90,12 +94,14 @@ export async function sendDetailedReportEmail(
     })
 
     if (error) throw error
+    console.log("Detailed report email sent to", email)
     return true
   } catch (err) {
     console.error("❌ Resend email error:", err)
     return false
   }
 }
+
 // Generic reusable send email function
 async function sendEmail(
   email: string,
@@ -103,7 +109,7 @@ async function sendEmail(
   html: string
 ): Promise<boolean> {
   try {
-    const { error } = await resend.emails.send({
+    const { error } = await getResendClient().emails.send({
       from: "noreply@sifiohealth.com",
       to: email,
       subject,
